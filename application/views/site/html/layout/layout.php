@@ -121,7 +121,7 @@
                         <div class="short-info wow fadeInUp">
                             <h3>¿Lo que hago?</h3>
                             <p>
-                                He trabajado en empresas en las cuales me ha permitido enriquecerme de múltiples conocimientos en varios ámbitos y desde entonces vengo ejerciendo mi profesión como Ing. en Sistemas Computacionales orientado hacia el desarrollo de aplicaciones, tengo un amor hacia el desarrollo de sistemas, y tengo experiencia:
+                                He trabajado en empresas en las cuales me han permitido enriquecerme de múltiples conocimientos en varios ámbitos y desde entonces vengo ejerciendo mi profesión como Ing. en Sistemas Computacionales orientado hacia el desarrollo de aplicaciones, tengo un amor hacia el desarrollo de sistemas, y tengo experiencia:
                             </p>
                             <ul class="list-check">
                                 <li>Experiencia con Usuario Final</li>
