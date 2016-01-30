@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rpte_viajeros_arriban" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isIgnorePagination="true" uuid="f7b686af-ea61-4463-b46a-41a599ef40d9">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="96"/>
+	<parameter name="fecha_inicio" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="fecha_fin" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="condicion" class="java.lang.String"/>
+	<parameter name="ci_root_path" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{ci_root_path}.concat( "\\application\\reports\\resumen_grupos_general\\viajeros_arriban\\" )]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+	A2.WEEK2 AS WEEK2,
+	A2.DATE2 AS DATE2,
+	A2.TIME2 AS TIME2,
+	A2.HOUR2 || ':00:00' AS HOUR2,
+	A2.MONTH2 AS MONTH2,
+	(
+		CASE
+		WHEN (A2.MONTH2 = '1') THEN
+			'ENERO'
+		WHEN (A2.MONTH2 = '2') THEN
+			'FEBRERO'
+		WHEN (A2.MONTH2 = '3') THEN
+			'MARZO'
+		WHEN (A2.MONTH2 = '4') THEN
+			'ABRIL'
+		WHEN (A2.MONTH2 = '5') THEN
+			'MAYO'
+		WHEN (A2.MONTH2 = '6') THEN
+			'JUNIO'
+		WHEN (A2.MONTH2 = '7') THEN
+			'JULIO'
+		WHEN (A2.MONTH2 = '8') THEN
+			'AGOSTO'
+		WHEN (A2.MONTH2 = '9') THEN
+			'SEPTIEMBRE'
+		WHEN (A2.MONTH2 = '10') THEN
+			'OCTUBRE'
+		WHEN (A2.MONTH2 = '11') THEN
+			'NOVIEMBRE'
+		WHEN (A2.MONTH2 = '12') THEN
+			'DICIEMBRE'
+		ELSE
+			'NO DEFINIDO'
+		END
+	) AS L_MONTH2,
+	A2.ID_GRUPO_CAMARA AS ID_GRUPO,
+	A2.GRUPO_CAMARA AS GRUPO_CAMARA,
+	A2.EVENT_TYPE2 AS EVENT_TYPE2,
+	A2.CAMERA AS CAMERA,
+	COUNT (A2.CAMERA) AS TOTAL_COUNT
+FROM
+	(
+		SELECT
+			A1.*, (
+				EXTRACT (WEEK FROM A1.START_DATE)
+			) AS WEEK2,
+			CAST (A1.START_DATE AS DATE) AS DATE2,
+			CAST (A1.START_DATE AS TIME) AS TIME2,
+			SUBSTRING (
+				CAST (A1.START_DATE AS TIME)
+				FROM
+					1 FOR 2
+			) AS HOUR2,
+			(
+				EXTRACT (MONTH FROM A1.START_DATE)
+			) AS MONTH2,
+			(
+				CASE
+				WHEN (A1.CAMERA BETWEEN 1 AND 4) THEN
+					'PARQUEOS PUBLICOS PUERTA N.1'
+				WHEN (A1.CAMERA BETWEEN 5 AND 8) THEN
+					'PARQUEOS PUBLICOS PUERTA N.2'
+				WHEN (A1.CAMERA BETWEEN 9 AND 10) THEN
+					'LLEGADA TAXIS PUERTA N.3'
+				WHEN (A1.CAMERA BETWEEN 11 AND 12) THEN
+					'ARRIBOS PUERTA A'
+				WHEN (A1.CAMERA BETWEEN 13 AND 14) THEN
+					'ARRIBOS PUERTA B'
+				WHEN (A1.CAMERA BETWEEN 15 AND 16) THEN
+					'ARRIBOS PUERTA C'
+				WHEN (A1.CAMERA BETWEEN 17 AND 20) THEN
+					'PATIO DE COMIDAS'
+				WHEN (A1.CAMERA BETWEEN 21 AND 22) THEN
+					'ASCENSORES PB'
+				WHEN (A1.CAMERA BETWEEN 23 AND 24) THEN
+					'BAÑOS PB ZONA A - B'
+				WHEN (A1.CAMERA BETWEEN 25 AND 28) THEN
+					'ESCALERAS ELECTRICAS'
+				WHEN (A1.CAMERA BETWEEN 29 AND 30) THEN
+					'ASCENSORES 1er. PISO'
+				WHEN (A1.CAMERA BETWEEN 31 AND 33) THEN
+					'BAÑOS 1er. PISO'
+				WHEN (A1.CAMERA BETWEEN 34 AND 37) THEN
+					'TORNIQUETE 1er. PISO'
+				WHEN (A1.CAMERA BETWEEN 38 AND 39) THEN
+					'ASCENSORES 2do. PISO'
+				WHEN (A1.CAMERA BETWEEN 40 AND 43) THEN
+					'BAÑOS 2do. PISO'
+				WHEN (A1.CAMERA BETWEEN 44 AND 47) THEN
+					'TORNIQUETES 2do. PISO'
+				ELSE
+					'NO DEFINIDO'
+				END
+			) AS GRUPO_CAMARA,
+			(
+				CASE
+				WHEN (A1.CAMERA BETWEEN 1 AND 4) THEN
+					'1'
+				WHEN (A1.CAMERA BETWEEN 5 AND 8) THEN
+					'2'
+				WHEN (A1.CAMERA BETWEEN 9 AND 10) THEN
+					'3'
+				WHEN (A1.CAMERA BETWEEN 11 AND 12) THEN
+					'4'
+				WHEN (A1.CAMERA BETWEEN 13 AND 14) THEN
+					'5'
+				WHEN (A1.CAMERA BETWEEN 15 AND 16) THEN
+					'6'
+				WHEN (A1.CAMERA BETWEEN 17 AND 20) THEN
+					'7'
+				WHEN (A1.CAMERA BETWEEN 21 AND 22) THEN
+					'8'
+				WHEN (A1.CAMERA BETWEEN 23 AND 24) THEN
+					'9'
+				WHEN (A1.CAMERA BETWEEN 25 AND 28) THEN
+					'10'
+				WHEN (A1.CAMERA BETWEEN 29 AND 30) THEN
+					'11'
+				WHEN (A1.CAMERA BETWEEN 31 AND 33) THEN
+					'12'
+				WHEN (A1.CAMERA BETWEEN 34 AND 37) THEN
+					'13'
+				WHEN (A1.CAMERA BETWEEN 38 AND 39) THEN
+					'14'
+				WHEN (A1.CAMERA BETWEEN 40 AND 43) THEN
+					'15'
+				WHEN (A1.CAMERA BETWEEN 44 AND 47) THEN
+					'16'
+				ELSE
+					'0'
+				END
+			) AS ID_GRUPO_CAMARA,
+			A1.ZONE_NAME AS EVENT_TYPE2
+		FROM
+			T_ANALYTICS AS A1
+		WHERE
+			1 = 1
+		--AND A1.ZONE_NAME IN ('ENTRADA','SALIDA')
+		AND A1.ZONE_NAME IN ('ENTRADA')
+	) A2
+WHERE
+	1 = 1
+AND (A2.ID_GRUPO_CAMARA='4'
+	OR A2.ID_GRUPO_CAMARA='5'
+	OR A2.ID_GRUPO_CAMARA='6')
+AND (
+	A2.START_DATE BETWEEN '$P!{fecha_inicio} 00:00:00'
+	AND '$P!{fecha_fin} 23:59:59'
+)
+GROUP BY
+	A2.GRUPO_CAMARA,
+	A2.ID_GRUPO_CAMARA,
+	A2.EVENT_TYPE2,
+	A2.WEEK2,
+	A2.DATE2,
+	A2.MONTH2,
+	A2.TIME2,
+	A2.HOUR2,
+	A2.CAMERA
+ORDER BY
+	A2.CAMERA,
+	A2.EVENT_TYPE2,
+	A2.GRUPO_CAMARA,
+	A2.WEEK2,
+	A2.DATE2,
+	A2.MONTH2,
+	A2.TIME2,
+	A2.HOUR2;]]>
+	</queryString>
+	<field name="WEEK2" class="java.lang.Integer"/>
+	<field name="DATE2" class="java.sql.Date"/>
+	<field name="TIME2" class="java.sql.Time"/>
+	<field name="HOUR2" class="java.lang.String"/>
+	<field name="MONTH2" class="java.lang.Integer"/>
+	<field name="L_MONTH2" class="java.lang.String"/>
+	<field name="ID_GRUPO" class="java.lang.String"/>
+	<field name="GRUPO_CAMARA" class="java.lang.String"/>
+	<field name="EVENT_TYPE2" class="java.lang.String"/>
+	<field name="CAMERA" class="java.lang.String"/>
+	<field name="TOTAL_COUNT" class="java.lang.Integer"/>
+	<title>
+		<band height="81" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="802" height="81" uuid="5cbb8e56-40da-4300-bd4d-f0fac9bc2f1f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="16" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["REPORTE DE CÁMARAS DESDE EL "+$P{fecha_inicio}+" HASTA "+$P{fecha_fin}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="33" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="802" height="33" uuid="5ea54764-c98b-4f28-86d4-33a1fd2d7721"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[VIAJEROS ARRIBAN]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<summary>
+		<band height="200">
+			<frame>
+				<reportElement positionType="Float" x="0" y="0" width="802" height="100" isPrintWhenDetailOverflows="true" uuid="8759d157-3029-4cc2-b799-16ff49f0c28d"/>
+				<subreport>
+					<reportElement x="0" y="0" width="802" height="100" uuid="3cdc846c-8014-43a8-82f2-c5d28927c5b8"/>
+					<subreportParameter name="fecha_inicio">
+						<subreportParameterExpression><![CDATA[$P{fecha_inicio}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="fecha_fin">
+						<subreportParameterExpression><![CDATA[$P{fecha_fin}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="condicion">
+						<subreportParameterExpression><![CDATA[$P{condicion}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="ci_root_path">
+						<subreportParameterExpression><![CDATA[$P{ci_root_path}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "sub_rpte_by_day.jasper"]]></subreportExpression>
+				</subreport>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="0" y="100" width="802" height="100" isPrintWhenDetailOverflows="true" uuid="d64e499e-b235-4902-b1e6-5757f4d75127"/>
+				<subreport>
+					<reportElement x="0" y="0" width="802" height="100" uuid="fbbf2ecd-8767-4f14-8ae1-289c6e2d6acb"/>
+					<subreportParameter name="fecha_inicio">
+						<subreportParameterExpression><![CDATA[$P{fecha_inicio}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="fecha_fin">
+						<subreportParameterExpression><![CDATA[$P{fecha_fin}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="condicion">
+						<subreportParameterExpression><![CDATA[$P{condicion}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="ci_root_path">
+						<subreportParameterExpression><![CDATA[$P{ci_root_path}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "sub_rpte_by_month.jasper"]]></subreportExpression>
+				</subreport>
+			</frame>
+		</band>
+	</summary>
+</jasperReport>

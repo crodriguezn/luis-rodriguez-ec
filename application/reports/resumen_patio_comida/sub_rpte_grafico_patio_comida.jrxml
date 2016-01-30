@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sub_rpte_grafico_patio_comida" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="842" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="249d47ee-f7c7-4bd6-aba0-db20a8402272">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="fecha_inicio" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="fecha_fin" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="condicion" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ci_root_path" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+	t_pc.r_date,
+	SUM (t_pc.total) AS total
+FROM
+	(
+		SELECT
+			p_c.r_date,
+			(
+				EXTRACT (YEAR FROM p_c.r_date)
+			) AS year2,
+			(
+				EXTRACT (MONTH FROM p_c.r_date)
+			) AS month2,
+			p_c.event,
+			SUM (p_c.total) AS total
+		FROM
+			patios_comida AS p_c
+		WHERE
+			1 = 1
+		GROUP BY
+			p_c.r_date,
+			p_c.event
+		ORDER BY
+			p_c.r_date,
+			p_c.event
+	) AS t_pc
+WHERE
+	1 = 1
+AND t_pc.event IN ('ENTRADA')
+	AND t_pc.r_date BETWEEN '$P!{fecha_inicio}' AND '$P!{fecha_fin}'
+GROUP BY
+	t_pc.r_date]]>
+	</queryString>
+	<field name="r_date" class="java.sql.Date"/>
+	<field name="total" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<summary>
+		<band height="400" splitType="Stretch">
+			<lineChart>
+				<chart isShowLegend="false">
+					<reportElement positionType="Float" x="0" y="0" width="842" height="400" isPrintWhenDetailOverflows="true" uuid="1927e76b-c701-4c3a-bd41-42b84a5dc7d3"/>
+					<chartTitle>
+						<font size="8"/>
+					</chartTitle>
+					<chartSubtitle>
+						<font size="8"/>
+					</chartSubtitle>
+					<chartLegend>
+						<font size="8"/>
+					</chartLegend>
+				</chart>
+				<categoryDataset>
+					<categorySeries>
+						<seriesExpression><![CDATA["Dummy Series"]]></seriesExpression>
+						<categoryExpression><![CDATA[$F{r_date}]]></categoryExpression>
+						<valueExpression><![CDATA[$F{total}]]></valueExpression>
+					</categorySeries>
+				</categoryDataset>
+				<linePlot isShowLines="true" isShowShapes="true">
+					<plot labelRotation="-90.0"/>
+					<categoryAxisFormat labelRotation="-90.0">
+						<axisFormat verticalTickLabels="true">
+							<labelFont>
+								<font size="8"/>
+							</labelFont>
+							<tickLabelFont>
+								<font size="8"/>
+							</tickLabelFont>
+						</axisFormat>
+					</categoryAxisFormat>
+					<valueAxisFormat>
+						<axisFormat verticalTickLabels="false">
+							<labelFont>
+								<font size="8"/>
+							</labelFont>
+							<tickLabelFont>
+								<font size="8"/>
+							</tickLabelFont>
+						</axisFormat>
+					</valueAxisFormat>
+				</linePlot>
+			</lineChart>
+		</band>
+	</summary>
+</jasperReport>

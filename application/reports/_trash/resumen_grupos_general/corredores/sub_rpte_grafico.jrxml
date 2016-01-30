@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sub_rpte_grafico" pageWidth="802" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="a1ae2f2b-28c5-40a2-8363-a0eb9690ae75">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="30"/>
+	<parameter name="fecha_inicio" class="java.lang.String"/>
+	<parameter name="fecha_fin" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="condicion" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ci_root_path" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+    GRUPO_CAMARA,
+    SUM(TOTAL_COUNT) AS TOTAL,
+    (
+    SELECT
+    SUM(TOTAL_COUNT) AS SUM_TOTAL
+FROM
+    (
+        SELECT
+            A2.YEAR2 AS YEAR2,
+            A2.WEEK2 AS WEEK2,
+            A2.DATE2 AS DATE2,
+            A2.TIME2 AS TIME2,
+            A2.HOUR2 || ':00:00' AS HOUR2,
+            A2.MONTH2 AS MONTH2,
+            A2.ID_GRUPO_CAMARA AS ID_GRUPO,
+            A2.GRUPO_CAMARA AS GRUPO_CAMARA,
+            A2.EVENT_TYPE2 AS EVENT_TYPE2,
+            A2.CAMERA AS CAMERA,
+            COUNT (A2.CAMERA) AS TOTAL_COUNT
+        FROM
+            (
+                SELECT
+                    T_A.*, (
+                        EXTRACT (WEEK FROM T_A.START_DATE)
+                    ) AS WEEK2,
+                    CAST (T_A.START_DATE AS DATE) AS DATE2,
+                    CAST (T_A.START_DATE AS TIME) AS TIME2,
+                    SUBSTRING (
+                        CAST (T_A.START_DATE AS DATE)
+                        FROM
+                            1 FOR 4
+                    ) AS YEAR2,
+                    SUBSTRING (
+                        CAST (T_A.START_DATE AS TIME)
+                        FROM
+                            1 FOR 2
+                    ) AS HOUR2,
+                    (
+                        EXTRACT (MONTH FROM T_A.START_DATE)
+                    ) AS MONTH2,
+                    (
+                        CASE
+                        WHEN (
+                            (T_A.CAMERA BETWEEN 1 AND 4)
+                            OR (T_A.CAMERA BETWEEN 15 AND 16)
+                        ) THEN
+                            'CORREDOR 1'
+                        WHEN (
+                            (T_A.CAMERA BETWEEN 5 AND 8)
+                            OR (T_A.CAMERA BETWEEN 11 AND 12)
+                        ) THEN
+                            'CORREDOR 2'
+                        WHEN (T_A.CAMERA BETWEEN 9 AND 10) THEN
+                            'CORREDOR 3'
+                        WHEN (
+                            (T_A.CAMERA BETWEEN 13 AND 14)
+                            OR (T_A.CAMERA BETWEEN 17 AND 20)
+                        ) THEN
+                            'CORREDOR 4'
+                        ELSE
+                            'NO DEFINIDO'
+                        END
+                    ) AS GRUPO_CAMARA,
+                    (
+                        CASE
+                        WHEN (
+                            (T_A.CAMERA BETWEEN 1 AND 4)
+                            OR (T_A.CAMERA BETWEEN 15 AND 16)
+                        ) THEN
+                            '1'
+                        WHEN (
+                            (T_A.CAMERA BETWEEN 5 AND 8)
+                            OR (T_A.CAMERA BETWEEN 11 AND 12)
+                        ) THEN
+                            '2'
+                        WHEN (T_A.CAMERA BETWEEN 9 AND 10) THEN
+                            '3'
+                        WHEN (
+                            (T_A.CAMERA BETWEEN 13 AND 14)
+                            OR (T_A.CAMERA BETWEEN 17 AND 20)
+                        ) THEN
+                            '4'
+                        ELSE
+                            '0'
+                        END
+                    ) AS ID_GRUPO_CAMARA,
+                    T_A.ZONE_NAME AS EVENT_TYPE2
+                FROM
+                    T_ANALYTICS AS T_A
+                WHERE
+                    1 = 1
+                AND T_A.ZONE_NAME IN ('ENTRADA')
+            ) A2
+        WHERE
+            1 = 1
+        AND (
+            A2.ID_GRUPO_CAMARA = '1'
+            OR A2.ID_GRUPO_CAMARA = '2'
+            OR A2.ID_GRUPO_CAMARA = '3'
+            OR A2.ID_GRUPO_CAMARA = '4'
+        )
+        AND (
+            A2.START_DATE BETWEEN '$P!{fecha_inicio} 00:00:00'
+            AND '$P!{fecha_fin} 23:59:59'
+        )
+        GROUP BY
+            A2.GRUPO_CAMARA,
+            A2.ID_GRUPO_CAMARA,
+            A2.EVENT_TYPE2,
+            A2.YEAR2,
+            A2.WEEK2,
+            A2.DATE2,
+            A2.MONTH2,
+            A2.TIME2,
+            A2.HOUR2,
+            A2.CAMERA
+        ORDER BY
+            A2.CAMERA,
+            A2.EVENT_TYPE2,
+            A2.GRUPO_CAMARA,
+            A2.YEAR2,
+            A2.WEEK2,
+            A2.DATE2,
+            A2.MONTH2,
+            A2.TIME2,
+            A2.HOUR2
+    ) AS T_T
+WHERE
+    1=1
+    )
+FROM
+    (
+        SELECT
+            A2.YEAR2 AS YEAR2,
+            A2.WEEK2 AS WEEK2,
+            A2.DATE2 AS DATE2,
+            A2.TIME2 AS TIME2,
+            A2.HOUR2 || ':00:00' AS HOUR2,
+            A2.MONTH2 AS MONTH2,
+            A2.ID_GRUPO_CAMARA AS ID_GRUPO,
+            A2.GRUPO_CAMARA AS GRUPO_CAMARA,
+            A2.EVENT_TYPE2 AS EVENT_TYPE2,
+            A2.CAMERA AS CAMERA,
+            COUNT (A2.CAMERA) AS TOTAL_COUNT
+        FROM
+            (
+                SELECT
+                    T_A.*, (
+                        EXTRACT (WEEK FROM T_A.START_DATE)
+                    ) AS WEEK2,
+                    CAST (T_A.START_DATE AS DATE) AS DATE2,
+                    CAST (T_A.START_DATE AS TIME) AS TIME2,
+                    SUBSTRING (
+                        CAST (T_A.START_DATE AS DATE)
+                        FROM
+                            1 FOR 4
+                    ) AS YEAR2,
+                    SUBSTRING (
+                        CAST (T_A.START_DATE AS TIME)
+                        FROM
+                            1 FOR 2
+                    ) AS HOUR2,
+                    (
+                        EXTRACT (MONTH FROM T_A.START_DATE)
+                    ) AS MONTH2,
+                    (
+                        CASE
+                        WHEN (
+                            (T_A.CAMERA BETWEEN 1 AND 4)
+                            OR (T_A.CAMERA BETWEEN 15 AND 16)
+                        ) THEN
+                            'CORREDOR 1'
+                        WHEN (
+                            (T_A.CAMERA BETWEEN 5 AND 8)
+                            OR (T_A.CAMERA BETWEEN 11 AND 12)
+                        ) THEN
+                            'CORREDOR 2'
+                        WHEN (T_A.CAMERA BETWEEN 9 AND 10) THEN
+                            'CORREDOR 3'
+                        WHEN (
+                            (T_A.CAMERA BETWEEN 13 AND 14)
+                            OR (T_A.CAMERA BETWEEN 17 AND 20)
+                        ) THEN
+                            'CORREDOR 4'
+                        ELSE
+                            'NO DEFINIDO'
+                        END
+                    ) AS GRUPO_CAMARA,
+                    (
+                        CASE
+                        WHEN (
+                            (T_A.CAMERA BETWEEN 1 AND 4)
+                            OR (T_A.CAMERA BETWEEN 15 AND 16)
+                        ) THEN
+                            '1'
+                        WHEN (
+                            (T_A.CAMERA BETWEEN 5 AND 8)
+                            OR (T_A.CAMERA BETWEEN 11 AND 12)
+                        ) THEN
+                            '2'
+                        WHEN (T_A.CAMERA BETWEEN 9 AND 10) THEN
+                            '3'
+                        WHEN (
+                            (T_A.CAMERA BETWEEN 13 AND 14)
+                            OR (T_A.CAMERA BETWEEN 17 AND 20)
+                        ) THEN
+                            '4'
+                        ELSE
+                            '0'
+                        END
+                    ) AS ID_GRUPO_CAMARA,
+                    T_A.ZONE_NAME AS EVENT_TYPE2
+                FROM
+                    T_ANALYTICS AS T_A
+                WHERE
+                    1 = 1
+                AND T_A.ZONE_NAME IN ('ENTRADA')
+            ) A2
+        WHERE
+            1 = 1
+        AND (
+            A2.ID_GRUPO_CAMARA = '1'
+            OR A2.ID_GRUPO_CAMARA = '2'
+            OR A2.ID_GRUPO_CAMARA = '3'
+            OR A2.ID_GRUPO_CAMARA = '4'
+        )
+        AND (
+            A2.START_DATE BETWEEN '$P!{fecha_inicio} 00:00:00'
+            AND '$P!{fecha_fin} 23:59:59'
+        )
+        GROUP BY
+            A2.GRUPO_CAMARA,
+            A2.ID_GRUPO_CAMARA,
+            A2.EVENT_TYPE2,
+            A2.YEAR2,
+            A2.WEEK2,
+            A2.DATE2,
+            A2.MONTH2,
+            A2.TIME2,
+            A2.HOUR2,
+            A2.CAMERA
+        ORDER BY
+            A2.CAMERA,
+            A2.EVENT_TYPE2,
+            A2.GRUPO_CAMARA,
+            A2.YEAR2,
+            A2.WEEK2,
+            A2.DATE2,
+            A2.MONTH2,
+            A2.TIME2,
+            A2.HOUR2
+    ) AS T_T
+WHERE
+    1=1
+GROUP BY
+GRUPO_CAMARA]]>
+	</queryString>
+	<field name="GRUPO_CAMARA" class="java.lang.String"/>
+	<field name="TOTAL" class="java.lang.Long"/>
+	<field name="SUM_TOTAL" class="java.lang.Long"/>
+	<variable name="SUMA" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTAL}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<summary>
+		<band height="401" splitType="Stretch">
+			<pieChart>
+				<chart isShowLegend="true">
+					<reportElement positionType="Float" x="0" y="0" width="401" height="401" isPrintWhenDetailOverflows="true" uuid="350f9ecc-707b-4a6f-a4b4-84adcc904a7a"/>
+					<chartTitle>
+						<font size="8" isBold="true"/>
+					</chartTitle>
+					<chartSubtitle>
+						<font size="8" isBold="true"/>
+					</chartSubtitle>
+					<chartLegend>
+						<font size="8" isBold="true"/>
+					</chartLegend>
+				</chart>
+				<pieDataset>
+					<keyExpression><![CDATA[$F{GRUPO_CAMARA}]]></keyExpression>
+					<valueExpression><![CDATA[$F{TOTAL}]]></valueExpression>
+					<labelExpression><![CDATA[$F{TOTAL}+"("+ new java.text.DecimalFormat("0.00").format(($F{TOTAL}.doubleValue()*100)/$F{SUM_TOTAL}) +"%)"]]></labelExpression>
+				</pieDataset>
+				<piePlot isShowLabels="true" isCircular="true">
+					<plot/>
+					<itemLabel>
+						<font size="8" isBold="true"/>
+					</itemLabel>
+				</piePlot>
+			</pieChart>
+			<stackedBar3DChart>
+				<chart isShowLegend="true">
+					<reportElement positionType="Float" x="401" y="0" width="401" height="401" isPrintWhenDetailOverflows="true" uuid="07a7a88e-1f32-4db2-a5c1-e88dbe91d647"/>
+					<chartTitle>
+						<font size="8" isBold="true"/>
+					</chartTitle>
+					<chartSubtitle>
+						<font size="8" isBold="true"/>
+					</chartSubtitle>
+					<chartLegend>
+						<font size="8" isBold="true"/>
+					</chartLegend>
+				</chart>
+				<categoryDataset>
+					<categorySeries>
+						<seriesExpression><![CDATA[$F{GRUPO_CAMARA}]]></seriesExpression>
+						<categoryExpression><![CDATA[$F{GRUPO_CAMARA}]]></categoryExpression>
+						<valueExpression><![CDATA[$F{TOTAL}]]></valueExpression>
+						<labelExpression><![CDATA[$F{TOTAL}.toString()]]></labelExpression>
+					</categorySeries>
+				</categoryDataset>
+				<bar3DPlot isShowLabels="true">
+					<plot/>
+					<itemLabel/>
+					<categoryAxisFormat>
+						<axisFormat verticalTickLabels="false">
+							<labelFont>
+								<font size="8" isBold="true"/>
+							</labelFont>
+							<tickLabelFont>
+								<font size="8" isBold="true"/>
+							</tickLabelFont>
+						</axisFormat>
+					</categoryAxisFormat>
+					<valueAxisFormat>
+						<axisFormat verticalTickLabels="false">
+							<labelFont>
+								<font size="8" isBold="true"/>
+							</labelFont>
+							<tickLabelFont>
+								<font size="8" isBold="true"/>
+							</tickLabelFont>
+						</axisFormat>
+					</valueAxisFormat>
+				</bar3DPlot>
+			</stackedBar3DChart>
+		</band>
+	</summary>
+</jasperReport>

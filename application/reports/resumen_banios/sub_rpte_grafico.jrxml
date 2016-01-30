@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sub_rpte_grafico" language="groovy" pageWidth="450" pageHeight="350" orientation="Landscape" columnWidth="450" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="e2b613b1-d994-4d47-b82e-a258910ab359">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="fecha_inicio" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="fecha_fin" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="condicion" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ci_root_path" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+	'GRUPO' AS grupo,
+	t_.group_camera,
+	SUM (t_.total) AS total,
+	round(AVG(t_.total)) AS promedio,
+	MIN (t_.total) AS minimo,
+	MAX (t_.total) AS maximo
+FROM
+	(
+		SELECT
+			(
+				EXTRACT (YEAR FROM d_a_t.r_date)
+			) AS year2,
+			(
+				EXTRACT (MONTH FROM d_a_t.r_date)
+			) AS month2,
+			d_a_t.group_camera,
+			SUM (d_a_t.total) AS total
+		FROM
+			(
+				SELECT
+					a_t.r_date,
+					a_t.r_hour,
+					(
+						CASE
+						WHEN rtrim(a_t.camera) = 'BPB-A' THEN
+							'1. Baño PB - A'
+						WHEN rtrim(a_t.camera) = 'BPB-B' THEN
+							'2. Baño PB - B'
+						WHEN rtrim(a_t.camera) = 'BP1-A(MIXTO)' THEN
+							'3. Baño N1 - A(Entrada Mixta)'
+						WHEN rtrim(a_t.camera) = 'BP1-BH' THEN
+							'4. Baño N1 - B(Hombres)'
+						WHEN rtrim(a_t.camera) = 'BP1-BM' THEN
+							'5. Baño N1 - B(Mujeres)'
+						WHEN rtrim(a_t.camera) = 'BP2-AH' THEN
+							'6. Baño N2 - A(Hombres)'
+						WHEN rtrim(a_t.camera) = 'BP2-AM' THEN
+							'7. Baño N2 - A(Mujeres)'
+						WHEN rtrim(a_t.camera) = 'BP2-BH' THEN
+							'8. Baño N2 - B(Hombres)'
+						WHEN rtrim(a_t.camera) = 'BP2-BM' THEN
+							'9. Baño N2 - B(Mujeres)'
+						ELSE
+							'NO FOUND'
+						END
+					) AS group_camera,
+					a_t.camera,
+					SUM (a_t.total) AS total
+				FROM
+					banio AS a_t
+				WHERE
+					1 = 1
+				AND a_t.event IN ('ENTRADA')
+				GROUP BY
+					a_t.r_date,
+					a_t.r_hour,
+					a_t.id_group_camera,
+					a_t.group_camera,
+					a_t.camera
+				ORDER BY
+					a_t.r_date,
+					a_t.r_hour,
+					a_t.id_group_camera,
+					a_t.group_camera,
+					a_t.camera
+			) AS d_a_t
+		WHERE
+			1 = 1
+			--AND (d_a_t.r_date BETWEEN '$P!{fecha_inicio}'AND '$P!{fecha_fin}'		)
+		GROUP BY
+			d_a_t.r_date,
+			d_a_t.group_camera
+		ORDER BY
+			d_a_t.r_date,
+			d_a_t.group_camera
+	) AS t_
+WHERE
+	1 = 1
+GROUP BY
+	t_.group_camera
+ORDER BY
+	t_.group_camera]]>
+	</queryString>
+	<field name="grupo" class="java.lang.String"/>
+	<field name="group_camera" class="java.lang.String"/>
+	<field name="total" class="java.math.BigDecimal"/>
+	<field name="promedio" class="java.math.BigDecimal"/>
+	<field name="minimo" class="java.math.BigDecimal"/>
+	<field name="maximo" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<summary>
+		<band height="350" splitType="Stretch">
+			<pieChart>
+				<chart isShowLegend="true">
+					<reportElement x="0" y="0" width="450" height="350" uuid="8088947c-f94f-43c3-b32c-c65ca1c5577f"/>
+					<chartTitle>
+						<font size="8"/>
+					</chartTitle>
+					<chartSubtitle>
+						<font size="8"/>
+					</chartSubtitle>
+					<chartLegend>
+						<font size="8"/>
+					</chartLegend>
+				</chart>
+				<pieDataset>
+					<keyExpression><![CDATA[$F{group_camera}]]></keyExpression>
+					<valueExpression><![CDATA[$F{total}]]></valueExpression>
+					<labelExpression><![CDATA[($F{group_camera}+" "+$F{total}).toString()]]></labelExpression>
+				</pieDataset>
+				<piePlot isShowLabels="true" isCircular="true">
+					<plot/>
+					<itemLabel>
+						<font size="8"/>
+					</itemLabel>
+				</piePlot>
+			</pieChart>
+		</band>
+	</summary>
+</jasperReport>

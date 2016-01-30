@@ -1,0 +1,969 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sub_rpte_rpte_viajeros_arriban_by_month" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="842" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isIgnorePagination="true" uuid="b5fd457d-bcdb-444a-8e62-61a53522bb37">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Crosstab Data Text" hAlign="Center"/>
+	<parameter name="fecha_inicio" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="fecha_fin" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="condicion" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ci_root_path" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+	t_.year2,
+	(
+		CASE
+		WHEN (t_.month2 = '1') THEN
+			'ENERO'
+		WHEN (t_.month2 = '2') THEN
+			'FEBRERO'
+		WHEN (t_.month2 = '3') THEN
+			'MARZO'
+		WHEN (t_.month2 = '4') THEN
+			'ABRIL'
+		WHEN (t_.month2 = '5') THEN
+			'MAYO'
+		WHEN (t_.month2 = '6') THEN
+			'JUNIO'
+		WHEN (t_.month2 = '7') THEN
+			'JULIO'
+		WHEN (t_.month2 = '8') THEN
+			'AGOSTO'
+		WHEN (t_.month2 = '9') THEN
+			'SEPTIEMBRE'
+		WHEN (t_.month2 = '10') THEN
+			'OCTUBRE'
+		WHEN (t_.month2 = '11') THEN
+			'NOVIEMBRE'
+		WHEN (t_.month2 = '12') THEN
+			'DICIEMBRE'
+		ELSE
+			'NO FOUND'
+		END
+	) AS month2,
+	t_.group_camera,
+	SUM (t_.total) AS total,
+	round(AVG(t_.total)) AS promedio,
+	MIN (t_.total) AS minimo,
+	MAX (t_.total) AS maximo
+FROM
+	(
+		SELECT
+			(
+				EXTRACT (YEAR FROM d_a_t.r_date)
+			) AS year2,
+			(
+				EXTRACT (MONTH FROM d_a_t.r_date)
+			) AS month2,
+			d_a_t.group_camera,
+			SUM (d_a_t.total) AS total
+		FROM
+			(
+				SELECT
+					a_t.r_date,
+					a_t.r_hour,
+					(
+						CASE
+						WHEN a_t.id_group_camera = '4' THEN
+							'Puerta A'
+						WHEN a_t.id_group_camera = '5' THEN
+							'Puerta B'
+						WHEN a_t.id_group_camera = '6' THEN
+							'Puerta C'
+						ELSE
+							'NO FOUND'
+						END
+					) AS group_camera,
+					a_t.camera,
+					SUM (a_t.total) AS total
+				FROM
+					access_terminal AS a_t
+				WHERE
+					1 = 1
+				AND a_t.event IN ('ENTRADA')
+				AND a_t.id_group_camera BETWEEN '4'
+				AND '6'
+				GROUP BY
+					a_t.r_date,
+					a_t.r_hour,
+					a_t.id_group_camera,
+					a_t.group_camera,
+					a_t.camera
+				ORDER BY
+					a_t.r_date,
+					a_t.r_hour,
+					a_t.id_group_camera,
+					a_t.group_camera,
+					a_t.camera
+			) AS d_a_t
+		WHERE
+			1 = 1
+			AND ( d_a_t.r_date BETWEEN '$P!{fecha_inicio}' AND '$P!{fecha_fin}')
+		GROUP BY
+			d_a_t.r_date,
+			d_a_t.group_camera
+		ORDER BY
+			d_a_t.r_date,
+			d_a_t.group_camera
+	) AS t_
+WHERE
+	1 = 1
+GROUP BY
+	t_.year2,
+	t_.month2,
+	t_.group_camera
+ORDER BY
+	t_.year2,
+	t_.month2,
+	t_.group_camera]]>
+	</queryString>
+	<field name="year2" class="java.lang.String"/>
+	<field name="month2" class="java.lang.String"/>
+	<field name="group_camera" class="java.lang.String"/>
+	<field name="total" class="java.math.BigDecimal"/>
+	<field name="promedio" class="java.math.BigDecimal"/>
+	<field name="minimo" class="java.math.BigDecimal"/>
+	<field name="maximo" class="java.math.BigDecimal"/>
+	<variable name="total_promedio" class="java.lang.Integer" resetType="None" calculation="Sum">
+		<variableExpression><![CDATA[$F{promedio}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<summary>
+		<band height="580" splitType="Stretch">
+			<frame>
+				<reportElement positionType="Float" x="0" y="0" width="842" height="100" isPrintWhenDetailOverflows="true" uuid="b932b4be-2291-4bdc-be81-4310fd59a7b3"/>
+				<crosstab>
+					<reportElement x="0" y="0" width="842" height="100" uuid="7727e54f-93f6-4ce9-982a-282872f82f56"/>
+					<crosstabHeaderCell>
+						<cellContents>
+							<staticText>
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="270" height="30" uuid="20b1f4bd-5cec-49e9-87e5-8e1a89db3c80"/>
+								<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+									<pen lineWidth="0.5"/>
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font size="8" isBold="true"/>
+								</textElement>
+								<text><![CDATA[RESUMEN POR MES]]></text>
+							</staticText>
+						</cellContents>
+					</crosstabHeaderCell>
+					<rowGroup name="year2" width="70" totalPosition="End" headerPosition="Stretch">
+						<bucket class="java.lang.String">
+							<bucketExpression><![CDATA[$F{year2}]]></bucketExpression>
+						</bucket>
+						<crosstabRowHeader>
+							<cellContents backcolor="#999999" mode="Transparent">
+								<box>
+									<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+								</box>
+								<textField pattern="yyyy">
+									<reportElement style="Crosstab Data Text" x="0" y="0" width="70" height="80" uuid="7f01cebc-49db-48f4-bfe8-3ba672ed8f15"/>
+									<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+										<pen lineWidth="0.5"/>
+										<topPen lineWidth="0.5"/>
+										<leftPen lineWidth="0.5"/>
+										<bottomPen lineWidth="0.5"/>
+										<rightPen lineWidth="0.5"/>
+									</box>
+									<textElement verticalAlignment="Middle">
+										<font size="8" isBold="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{year2}]]></textFieldExpression>
+								</textField>
+							</cellContents>
+						</crosstabRowHeader>
+						<crosstabTotalRowHeader>
+							<cellContents backcolor="#005FB3" mode="Opaque">
+								<box>
+									<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+								</box>
+							</cellContents>
+						</crosstabTotalRowHeader>
+					</rowGroup>
+					<rowGroup name="month2" width="200" totalPosition="End" headerPosition="Stretch">
+						<bucket class="java.lang.String">
+							<bucketExpression><![CDATA[$F{month2}]]></bucketExpression>
+						</bucket>
+						<crosstabRowHeader>
+							<cellContents backcolor="#CCCCCC" mode="Opaque">
+								<box>
+									<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+								</box>
+								<textField>
+									<reportElement style="Crosstab Data Text" x="0" y="0" width="100" height="80" uuid="7952a4a2-214c-4492-90b5-2c8927cf7a4e"/>
+									<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+										<pen lineWidth="0.5"/>
+										<topPen lineWidth="0.5"/>
+										<leftPen lineWidth="0.5"/>
+										<bottomPen lineWidth="0.5"/>
+										<rightPen lineWidth="0.5"/>
+									</box>
+									<textElement verticalAlignment="Middle">
+										<font size="8" isBold="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{month2}]]></textFieldExpression>
+								</textField>
+								<staticText>
+									<reportElement style="Crosstab Data Text" x="100" y="0" width="100" height="20" uuid="15711d34-e39b-4e8f-b4be-2ab8f1d71168"/>
+									<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+										<pen lineWidth="0.5"/>
+										<topPen lineWidth="0.5"/>
+										<leftPen lineWidth="0.5"/>
+										<bottomPen lineWidth="0.5"/>
+										<rightPen lineWidth="0.5"/>
+									</box>
+									<textElement verticalAlignment="Middle">
+										<font size="8" isBold="true"/>
+									</textElement>
+									<text><![CDATA[TOTAL]]></text>
+								</staticText>
+								<staticText>
+									<reportElement style="Crosstab Data Text" x="100" y="20" width="100" height="20" uuid="8026bc57-7be7-4c53-83e4-629e0a0cb060"/>
+									<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+										<pen lineWidth="0.5"/>
+										<topPen lineWidth="0.5"/>
+										<leftPen lineWidth="0.5"/>
+										<bottomPen lineWidth="0.5"/>
+										<rightPen lineWidth="0.5"/>
+									</box>
+									<textElement verticalAlignment="Middle">
+										<font size="8" isBold="true"/>
+									</textElement>
+									<text><![CDATA[PROMEDIO]]></text>
+								</staticText>
+								<staticText>
+									<reportElement style="Crosstab Data Text" x="100" y="40" width="100" height="20" uuid="65028645-e4bc-432f-a3ff-caa865ae4796"/>
+									<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+										<pen lineWidth="0.5"/>
+										<topPen lineWidth="0.5"/>
+										<leftPen lineWidth="0.5"/>
+										<bottomPen lineWidth="0.5"/>
+										<rightPen lineWidth="0.5"/>
+									</box>
+									<textElement verticalAlignment="Middle">
+										<font size="8" isBold="true"/>
+									</textElement>
+									<text><![CDATA[MINIMO]]></text>
+								</staticText>
+								<staticText>
+									<reportElement style="Crosstab Data Text" x="100" y="60" width="100" height="20" uuid="9abe9a1f-11bf-4392-a49a-259fdd87f15e"/>
+									<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+										<pen lineWidth="0.5"/>
+										<topPen lineWidth="0.5"/>
+										<leftPen lineWidth="0.5"/>
+										<bottomPen lineWidth="0.5"/>
+										<rightPen lineWidth="0.5"/>
+									</box>
+									<textElement verticalAlignment="Middle">
+										<font size="8" isBold="true"/>
+									</textElement>
+									<text><![CDATA[MÁXIMO]]></text>
+								</staticText>
+							</cellContents>
+						</crosstabRowHeader>
+						<crosstabTotalRowHeader>
+							<cellContents backcolor="#BFE1FF" mode="Opaque">
+								<box>
+									<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+								</box>
+							</cellContents>
+						</crosstabTotalRowHeader>
+					</rowGroup>
+					<columnGroup name="group_camera" height="30" totalPosition="End" headerPosition="Stretch">
+						<bucket class="java.lang.String">
+							<bucketExpression><![CDATA[$F{group_camera}]]></bucketExpression>
+						</bucket>
+						<crosstabColumnHeader>
+							<cellContents backcolor="#F0F8FF" mode="Opaque">
+								<box>
+									<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+								</box>
+								<textField isStretchWithOverflow="true">
+									<reportElement style="Crosstab Data Text" positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="80" height="30" isPrintWhenDetailOverflows="true" uuid="cc81977e-64ed-4961-afa4-eba7a42a07ae"/>
+									<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+										<pen lineWidth="0.5"/>
+										<topPen lineWidth="0.5"/>
+										<leftPen lineWidth="0.5"/>
+										<bottomPen lineWidth="0.5"/>
+										<rightPen lineWidth="0.5"/>
+									</box>
+									<textElement verticalAlignment="Middle">
+										<font size="8" isBold="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{group_camera}]]></textFieldExpression>
+								</textField>
+							</cellContents>
+						</crosstabColumnHeader>
+						<crosstabTotalColumnHeader>
+							<cellContents backcolor="#FFCC00" mode="Opaque">
+								<box>
+									<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+								</box>
+								<staticText>
+									<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="80" height="30" isPrintWhenDetailOverflows="true" uuid="c8c7ac05-a486-4dff-8f54-7c4b808caef4"/>
+									<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+										<pen lineWidth="0.5"/>
+										<topPen lineWidth="0.5"/>
+										<leftPen lineWidth="0.5"/>
+										<bottomPen lineWidth="0.5"/>
+										<rightPen lineWidth="0.5"/>
+									</box>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font size="8" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Total Pasajeros arriban]]></text>
+								</staticText>
+							</cellContents>
+						</crosstabTotalColumnHeader>
+					</columnGroup>
+					<measure name="totalMeasure" class="java.math.BigDecimal" calculation="Sum">
+						<measureExpression><![CDATA[$F{total}]]></measureExpression>
+					</measure>
+					<measure name="promedioMeasure" class="java.lang.Integer" calculation="Sum">
+						<measureExpression><![CDATA[$F{promedio}]]></measureExpression>
+					</measure>
+					<measure name="minimoMeasure" class="java.lang.Integer" calculation="Sum">
+						<measureExpression><![CDATA[$F{minimo}]]></measureExpression>
+					</measure>
+					<measure name="maximoMeasure" class="java.lang.Integer" calculation="Sum">
+						<measureExpression><![CDATA[$F{maximo}]]></measureExpression>
+					</measure>
+					<crosstabCell width="80" height="80">
+						<cellContents>
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField>
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="80" height="20" uuid="2bb428d9-0014-470e-b9ec-060dbcaf3712"/>
+								<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+									<pen lineWidth="0.5"/>
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{totalMeasure}]]></textFieldExpression>
+							</textField>
+							<textField>
+								<reportElement style="Crosstab Data Text" x="0" y="20" width="80" height="20" uuid="d0d4ef9a-eca4-4adf-b08d-725eedf54d85"/>
+								<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+									<pen lineWidth="0.5"/>
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{promedioMeasure}]]></textFieldExpression>
+							</textField>
+							<textField>
+								<reportElement style="Crosstab Data Text" x="0" y="40" width="80" height="20" uuid="54ead961-1d5a-4266-aba7-c5cf37e7e6cf"/>
+								<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+									<pen lineWidth="0.5"/>
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{minimoMeasure}]]></textFieldExpression>
+							</textField>
+							<textField>
+								<reportElement style="Crosstab Data Text" x="0" y="60" width="80" height="20" uuid="3f601170-4515-4500-bcee-7ee18d7725e1"/>
+								<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+									<pen lineWidth="0.5"/>
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{maximoMeasure}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="80" height="0" rowTotalGroup="year2">
+						<cellContents backcolor="#005FB3" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="80" height="80" columnTotalGroup="group_camera">
+						<cellContents backcolor="#FFCC00" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField>
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="80" height="20" uuid="50a9b456-0f88-4829-8d36-693c54b994a4"/>
+								<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+									<pen lineWidth="0.5"/>
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{totalMeasure}]]></textFieldExpression>
+							</textField>
+							<textField>
+								<reportElement style="Crosstab Data Text" x="0" y="20" width="80" height="20" uuid="cd4a7695-e3fc-4acc-98fa-dcfe25e2e22a"/>
+								<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+									<pen lineWidth="0.5"/>
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{promedioMeasure_month2_ALL}]]></textFieldExpression>
+							</textField>
+							<textField>
+								<reportElement style="Crosstab Data Text" x="0" y="40" width="80" height="20" uuid="bcac0143-82d4-4763-8606-f25f6ca2e81f"/>
+								<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+									<pen lineWidth="0.5"/>
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{minimoMeasure_month2_ALL}]]></textFieldExpression>
+							</textField>
+							<textField>
+								<reportElement style="Crosstab Data Text" x="0" y="60" width="80" height="20" uuid="e40fb7dd-0ef2-43fc-a33f-1c2b48be665c"/>
+								<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+									<pen lineWidth="0.5"/>
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{maximoMeasure_month2_ALL}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="80" height="0" rowTotalGroup="year2" columnTotalGroup="group_camera">
+						<cellContents backcolor="#005FB3" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="80" height="0" rowTotalGroup="month2">
+						<cellContents backcolor="#BFE1FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="80" height="0" rowTotalGroup="month2" columnTotalGroup="group_camera">
+						<cellContents backcolor="#BFE1FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+						</cellContents>
+					</crosstabCell>
+				</crosstab>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="0" y="110" width="842" height="100" isPrintWhenDetailOverflows="true" uuid="19b7cb4c-313f-48ac-abe9-ae20daf75a1e"/>
+				<crosstab>
+					<reportElement positionType="Float" x="0" y="0" width="842" height="100" isPrintWhenDetailOverflows="true" uuid="ca8c76dc-4e03-4612-89c5-c275b961312c"/>
+					<crosstabHeaderCell>
+						<cellContents backcolor="#FFCC00" mode="Opaque">
+							<staticText>
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="100" height="60" uuid="444f38cf-1039-454f-94ae-4f694c0b62ad"/>
+								<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+									<pen lineWidth="0.5"/>
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font size="8" isBold="true"/>
+								</textElement>
+								<text><![CDATA[TABLA/GRÁFICO]]></text>
+							</staticText>
+						</cellContents>
+					</crosstabHeaderCell>
+					<rowGroup name="group_camera" width="100" totalPosition="End" headerPosition="Stretch">
+						<bucket class="java.lang.String">
+							<bucketExpression><![CDATA[$F{group_camera}]]></bucketExpression>
+						</bucket>
+						<crosstabRowHeader>
+							<cellContents backcolor="#F0F8FF" mode="Opaque">
+								<box>
+									<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+								</box>
+								<textField>
+									<reportElement style="Crosstab Data Text" x="0" y="0" width="100" height="25" uuid="244afa6b-0e75-4941-9a60-64555bb2d3eb"/>
+									<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+										<pen lineWidth="0.5"/>
+										<topPen lineWidth="0.5"/>
+										<leftPen lineWidth="0.5"/>
+										<bottomPen lineWidth="0.5"/>
+										<rightPen lineWidth="0.5"/>
+									</box>
+									<textElement verticalAlignment="Middle">
+										<font size="8"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{group_camera}]]></textFieldExpression>
+								</textField>
+							</cellContents>
+						</crosstabRowHeader>
+						<crosstabTotalRowHeader>
+							<cellContents backcolor="#CCCCCC" mode="Opaque">
+								<box>
+									<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+								</box>
+								<staticText>
+									<reportElement x="0" y="0" width="100" height="25" uuid="0a0de87b-e087-4e2d-83d0-08e63f86fa65"/>
+									<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+										<pen lineWidth="0.5"/>
+										<topPen lineWidth="0.5"/>
+										<leftPen lineWidth="0.5"/>
+										<bottomPen lineWidth="0.5"/>
+										<rightPen lineWidth="0.5"/>
+									</box>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font size="8" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Total General]]></text>
+								</staticText>
+							</cellContents>
+						</crosstabTotalRowHeader>
+					</rowGroup>
+					<columnGroup name="year2" height="30" totalPosition="End" headerPosition="Stretch">
+						<bucket class="java.lang.String">
+							<bucketExpression><![CDATA[$F{year2}]]></bucketExpression>
+						</bucket>
+						<crosstabColumnHeader>
+							<cellContents backcolor="#FFCC00" mode="Opaque">
+								<box>
+									<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+								</box>
+								<textField>
+									<reportElement style="Crosstab Data Text" x="0" y="0" width="66" height="30" uuid="11a9d5c3-8d57-4573-b541-d11c9eacadaa"/>
+									<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+										<pen lineWidth="0.5"/>
+										<topPen lineWidth="0.5"/>
+										<leftPen lineWidth="0.5"/>
+										<bottomPen lineWidth="0.5"/>
+										<rightPen lineWidth="0.5"/>
+									</box>
+									<textElement verticalAlignment="Middle">
+										<font size="8" isBold="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{year2}]]></textFieldExpression>
+								</textField>
+							</cellContents>
+						</crosstabColumnHeader>
+						<crosstabTotalColumnHeader>
+							<cellContents backcolor="#005FB3" mode="Opaque">
+								<box>
+									<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+								</box>
+							</cellContents>
+						</crosstabTotalColumnHeader>
+					</columnGroup>
+					<columnGroup name="month2" height="30" totalPosition="End" headerPosition="Stretch">
+						<bucket class="java.lang.String">
+							<bucketExpression><![CDATA[$F{month2}]]></bucketExpression>
+						</bucket>
+						<crosstabColumnHeader>
+							<cellContents backcolor="#FFCC00" mode="Opaque">
+								<box>
+									<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+								</box>
+								<textField>
+									<reportElement style="Crosstab Data Text" x="0" y="0" width="66" height="30" uuid="c1c2e9a1-24a5-4acb-9cec-4eb5eab6aa6e"/>
+									<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+										<pen lineWidth="0.5"/>
+										<topPen lineWidth="0.5"/>
+										<leftPen lineWidth="0.5"/>
+										<bottomPen lineWidth="0.5"/>
+										<rightPen lineWidth="0.5"/>
+									</box>
+									<textElement verticalAlignment="Middle">
+										<font size="8" isBold="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{month2}]]></textFieldExpression>
+								</textField>
+							</cellContents>
+						</crosstabColumnHeader>
+						<crosstabTotalColumnHeader>
+							<cellContents backcolor="#BFE1FF" mode="Opaque">
+								<box>
+									<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+								</box>
+							</cellContents>
+						</crosstabTotalColumnHeader>
+					</columnGroup>
+					<measure name="totalMeasure" class="java.math.BigDecimal" calculation="Sum">
+						<measureExpression><![CDATA[$F{total}]]></measureExpression>
+					</measure>
+					<measure name="porcentaje" class="java.lang.Double" calculation="Sum" percentageOf="GrandTotal">
+						<measureExpression><![CDATA[$F{total}]]></measureExpression>
+					</measure>
+					<crosstabCell width="66" height="25">
+						<cellContents>
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField>
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="66" height="25" uuid="7afcb1d1-3883-4587-80a9-f647e5ed80f7"/>
+								<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+									<pen lineWidth="0.5"/>
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{totalMeasure}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="66" height="25" rowTotalGroup="group_camera">
+						<cellContents backcolor="#CCCCCC" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField>
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="66" height="25" uuid="5650c44c-c1df-4970-8723-ca948bd2b9cd"/>
+								<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+									<pen lineWidth="0.5"/>
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font size="8" isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{totalMeasure}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" columnTotalGroup="year2">
+						<cellContents backcolor="#005FB3" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" rowTotalGroup="group_camera" columnTotalGroup="year2">
+						<cellContents backcolor="#005FB3" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" columnTotalGroup="month2">
+						<cellContents backcolor="#BFE1FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" rowTotalGroup="group_camera" columnTotalGroup="month2">
+						<cellContents backcolor="#BFE1FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+						</cellContents>
+					</crosstabCell>
+				</crosstab>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="0" y="220" width="842" height="100" isPrintWhenDetailOverflows="true" uuid="e2ed419a-0fba-44b4-aa31-ec1b61be7fe5"/>
+				<crosstab>
+					<reportElement x="0" y="0" width="842" height="100" uuid="30bff9be-ec45-4d20-b62e-6bcd702d62c1"/>
+					<crosstabHeaderCell>
+						<cellContents backcolor="#FFCC00" mode="Opaque">
+							<staticText>
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="120" height="60" uuid="4b716a21-74b1-44a8-b1b2-dc13277cd242"/>
+								<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+									<pen lineWidth="0.5"/>
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font size="8" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Distribución promedio por puerta]]></text>
+							</staticText>
+						</cellContents>
+					</crosstabHeaderCell>
+					<rowGroup name="group_camera" width="120" totalPosition="End" headerPosition="Stretch">
+						<bucket class="java.lang.String">
+							<bucketExpression><![CDATA[$F{group_camera}]]></bucketExpression>
+						</bucket>
+						<crosstabRowHeader>
+							<cellContents backcolor="#F0F8FF" mode="Transparent">
+								<box>
+									<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+								</box>
+								<textField>
+									<reportElement style="Crosstab Data Text" x="0" y="0" width="120" height="25" uuid="aff91008-088e-45e5-af70-0948ae8616a6"/>
+									<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+										<pen lineWidth="0.5"/>
+										<topPen lineWidth="0.5"/>
+										<leftPen lineWidth="0.5"/>
+										<bottomPen lineWidth="0.5"/>
+										<rightPen lineWidth="0.5"/>
+									</box>
+									<textElement verticalAlignment="Middle">
+										<font size="8"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{group_camera}]]></textFieldExpression>
+								</textField>
+							</cellContents>
+						</crosstabRowHeader>
+						<crosstabTotalRowHeader>
+							<cellContents backcolor="#BFE1FF" mode="Transparent">
+								<box>
+									<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+								</box>
+								<staticText>
+									<reportElement x="0" y="0" width="120" height="25" uuid="ff92e64f-56b2-4f6e-b25e-8db51f3a8897"/>
+									<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+										<pen lineWidth="0.5"/>
+										<topPen lineWidth="0.5"/>
+										<leftPen lineWidth="0.5"/>
+										<bottomPen lineWidth="0.5"/>
+										<rightPen lineWidth="0.5"/>
+									</box>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font size="8" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Total]]></text>
+								</staticText>
+							</cellContents>
+						</crosstabTotalRowHeader>
+					</rowGroup>
+					<columnGroup name="year2" height="30" totalPosition="End" headerPosition="Stretch">
+						<bucket class="java.lang.String">
+							<bucketExpression><![CDATA[$F{year2}]]></bucketExpression>
+						</bucket>
+						<crosstabColumnHeader>
+							<cellContents backcolor="#F0F8FF" mode="Opaque">
+								<box>
+									<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+								</box>
+							</cellContents>
+						</crosstabColumnHeader>
+						<crosstabTotalColumnHeader>
+							<cellContents backcolor="#FFCC00" mode="Opaque">
+								<box>
+									<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+								</box>
+								<staticText>
+									<reportElement x="0" y="0" width="70" height="60" forecolor="#000000" uuid="a1e404bd-1597-47ad-802b-caa51379d4de"/>
+									<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+										<pen lineWidth="0.5"/>
+										<topPen lineWidth="0.5"/>
+										<leftPen lineWidth="0.5"/>
+										<bottomPen lineWidth="0.5"/>
+										<rightPen lineWidth="0.5"/>
+									</box>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font size="8" isBold="true"/>
+									</textElement>
+									<text><![CDATA[PROMEDIO]]></text>
+								</staticText>
+							</cellContents>
+						</crosstabTotalColumnHeader>
+					</columnGroup>
+					<columnGroup name="month2" height="30" totalPosition="End" headerPosition="Stretch">
+						<bucket class="java.lang.String">
+							<bucketExpression><![CDATA[$F{month2}]]></bucketExpression>
+						</bucket>
+						<crosstabColumnHeader>
+							<cellContents backcolor="#F0F8FF" mode="Opaque">
+								<box>
+									<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+								</box>
+							</cellContents>
+						</crosstabColumnHeader>
+						<crosstabTotalColumnHeader>
+							<cellContents backcolor="#BFE1FF" mode="Opaque">
+								<box>
+									<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+								</box>
+							</cellContents>
+						</crosstabTotalColumnHeader>
+					</columnGroup>
+					<measure name="promedioMeasure" class="java.math.BigDecimal" calculation="Sum">
+						<measureExpression><![CDATA[$F{promedio}]]></measureExpression>
+					</measure>
+					<crosstabCell width="0" height="25">
+						<cellContents>
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="25" rowTotalGroup="group_camera">
+						<cellContents backcolor="#BFE1FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="70" columnTotalGroup="year2">
+						<cellContents backcolor="#BFE1FF" mode="Transparent">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField>
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="70" height="25" forecolor="#000000" uuid="dcba286d-0f95-4a56-9ab3-a45ae3b17fe4"/>
+								<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+									<pen lineWidth="0.5"/>
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{promedioMeasure}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="70" rowTotalGroup="group_camera" columnTotalGroup="year2">
+						<cellContents backcolor="#BFE1FF" mode="Transparent">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField>
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="70" height="25" forecolor="#000000" uuid="317e10d6-a706-4e34-be3c-4a1abaa5f732"/>
+								<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+									<pen lineWidth="0.5"/>
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font size="8" isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{promedioMeasure}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" columnTotalGroup="month2">
+						<cellContents backcolor="#BFE1FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" rowTotalGroup="group_camera" columnTotalGroup="month2">
+						<cellContents backcolor="#BFE1FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+						</cellContents>
+					</crosstabCell>
+				</crosstab>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="0" y="330" width="420" height="250" isPrintWhenDetailOverflows="true" uuid="3b4e97f3-7d1d-4cb4-86c2-3c58cfb35d64"/>
+				<stackedBarChart>
+					<chart isShowLegend="true">
+						<reportElement x="0" y="0" width="420" height="250" uuid="cf5c70db-24c1-44a0-b6b3-481ff8108c60"/>
+						<chartTitle/>
+						<chartSubtitle/>
+						<chartLegend/>
+					</chart>
+					<categoryDataset>
+						<categorySeries>
+							<seriesExpression><![CDATA[$F{group_camera}]]></seriesExpression>
+							<categoryExpression><![CDATA[$F{month2}+" "+$F{year2}]]></categoryExpression>
+							<valueExpression><![CDATA[$F{total}]]></valueExpression>
+						</categorySeries>
+					</categoryDataset>
+					<barPlot isShowLabels="true" isShowTickLabels="true" isShowTickMarks="true">
+						<plot>
+							<seriesColor seriesOrder="0" color="#009999"/>
+							<seriesColor seriesOrder="1" color="#FF6600"/>
+							<seriesColor seriesOrder="2" color="#FFCC33"/>
+						</plot>
+						<itemLabel/>
+						<categoryAxisFormat>
+							<axisFormat verticalTickLabels="true"/>
+						</categoryAxisFormat>
+						<valueAxisFormat>
+							<axisFormat verticalTickLabels="false"/>
+						</valueAxisFormat>
+					</barPlot>
+				</stackedBarChart>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="422" y="330" width="420" height="250" isPrintWhenDetailOverflows="true" uuid="61a8bc98-5940-4be5-a515-105e23c9a737"/>
+				<pieChart>
+					<chart isShowLegend="true">
+						<reportElement x="0" y="0" width="420" height="250" uuid="87876e39-18b8-47c9-9817-58622ceb6fc3"/>
+						<chartTitle/>
+						<chartSubtitle/>
+						<chartLegend/>
+					</chart>
+					<pieDataset>
+						<keyExpression><![CDATA[$F{group_camera}]]></keyExpression>
+						<valueExpression><![CDATA[$F{promedio}]]></valueExpression>
+						<labelExpression><![CDATA[$F{group_camera}.concat(" ".concat($F{promedio}.toString()))]]></labelExpression>
+					</pieDataset>
+					<piePlot isShowLabels="true" isCircular="true">
+						<plot>
+							<seriesColor seriesOrder="0" color="#009999"/>
+							<seriesColor seriesOrder="1" color="#FF6600"/>
+							<seriesColor seriesOrder="2" color="#FFCC33"/>
+						</plot>
+						<itemLabel/>
+					</piePlot>
+				</pieChart>
+			</frame>
+		</band>
+	</summary>
+</jasperReport>

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sub_rpte_dynamic_grafico_linea_by_day" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="842" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isIgnorePagination="true" uuid="581b64b2-9742-4d91-a06e-0115665c9dc9">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="fecha_inicio" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="fecha_fin" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="name_table" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="by_where" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="case_group_camera" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ci_root_path" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+	_t.r_date,
+	_t.group_camera,
+	SUM (_t.total) AS total
+FROM
+	(
+		SELECT
+			t_d.r_date,
+			t_d.id_group_camera,
+			(
+				$P!{case_group_camera}
+			) AS group_camera,
+			SUM (t_d.total) AS total
+		FROM
+			$P!{name_table} AS t_d
+		WHERE
+			1 = 1
+		AND t_d.event = 'ENTRADA'
+		$P!{by_where}
+		AND (t_d.r_date BETWEEN '$P!{fecha_inicio}'AND '$P!{fecha_fin}')
+		GROUP BY
+			t_d.r_date,
+			t_d.id_group_camera
+		ORDER BY
+			t_d.id_group_camera,
+			t_d.r_date
+	) AS _t
+WHERE
+	1 = 1
+GROUP BY
+	_t.r_date,
+	_t.group_camera
+ORDER BY
+	_t.r_date,
+	_t.group_camera]]>
+	</queryString>
+	<field name="r_date" class="java.sql.Date"/>
+	<field name="group_camera" class="java.lang.String"/>
+	<field name="total" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<summary>
+		<band height="267">
+			<lineChart>
+				<chart isShowLegend="true">
+					<reportElement x="0" y="0" width="842" height="267" uuid="f88eb7a2-bc69-44a0-9ab3-c6ee9fffed98"/>
+					<chartTitle/>
+					<chartSubtitle>
+						<font size="8"/>
+					</chartSubtitle>
+					<chartLegend>
+						<font size="8"/>
+					</chartLegend>
+				</chart>
+				<categoryDataset>
+					<categorySeries>
+						<seriesExpression><![CDATA[$F{group_camera}]]></seriesExpression>
+						<categoryExpression><![CDATA[$F{r_date}]]></categoryExpression>
+						<valueExpression><![CDATA[$F{total}]]></valueExpression>
+					</categorySeries>
+				</categoryDataset>
+				<linePlot isShowLines="true" isShowShapes="true">
+					<plot labelRotation="-90.0"/>
+					<categoryAxisFormat labelRotation="-90.0">
+						<axisFormat verticalTickLabels="true">
+							<labelFont>
+								<font size="8"/>
+							</labelFont>
+							<tickLabelFont>
+								<font size="8"/>
+							</tickLabelFont>
+						</axisFormat>
+					</categoryAxisFormat>
+					<valueAxisFormat>
+						<axisFormat verticalTickLabels="false">
+							<labelFont>
+								<font size="8"/>
+							</labelFont>
+							<tickLabelFont>
+								<font size="8"/>
+							</tickLabelFont>
+						</axisFormat>
+					</valueAxisFormat>
+				</linePlot>
+			</lineChart>
+		</band>
+	</summary>
+</jasperReport>

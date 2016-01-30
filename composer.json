@@ -1,0 +1,17 @@
+{
+    "name": "crodriguezn/luis-rodriguez-ec",
+    "type": "webpage",
+    "description": "Pagina Web Personal",
+    "keywords": ["luis rodriguez", "carlos luis rodriguez nieto", "carlos rodriguez nieto", "carlos luis rodriguez", "milagro", "ecuador"],
+    "homepage": "https://github.com/crodriguezn/luis-rodriguez-ec.git",
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "Luis Rodriguez",
+            "email": "taylorluis93@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3"
+    }
+}

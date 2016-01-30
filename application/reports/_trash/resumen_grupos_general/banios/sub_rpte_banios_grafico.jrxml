@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sub_rpte_banios_grafico" language="groovy" pageWidth="802" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isIgnorePagination="true" uuid="28c4fde9-84ad-489e-9ba8-224befe35a98">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="fecha_inicio" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="fecha_fin" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="condicion" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ci_root_path" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="year2" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="month2" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+    COUNT (A2.CAMERA) AS TOTAL,
+    A2.GRUPO_CAMARA   AS GRUPO_CAMARA
+FROM
+    (
+        SELECT
+            T_A.*,
+            ( EXTRACT (WEEK FROM T_A.START_DATE) )                   AS WEEK2,
+            CAST (T_A.START_DATE AS DATE)                            AS DATE2,
+            CAST (T_A.START_DATE AS TIME)                            AS TIME2,
+            SUBSTRING ( CAST (T_A.START_DATE AS TIME) FROM 1 FOR 2 ) AS HOUR2,
+            ( EXTRACT (MONTH FROM T_A.START_DATE) )                  AS MONTH2,
+            ( EXTRACT (YEAR FROM T_A.START_DATE) )                   AS YEAR2,
+            (
+                CASE
+                    WHEN (T_A.CAMERA =23)
+                    THEN 'BAÑO PB - A'
+                    WHEN (T_A.CAMERA = 24)
+                    THEN 'BAÑO PB - B'
+                    WHEN (T_A.CAMERA = 31)
+                    THEN 'Baño N1 - A (Entrada Mixta)'
+                    WHEN (T_A.CAMERA = 33)
+                    THEN 'Baño N1 - B (Hombres)'
+                    WHEN (T_A.CAMERA = 40)
+                    THEN 'Baño N2 - A (Mujeres)'
+                    WHEN (T_A.CAMERA = 43)
+                    THEN 'Baño N2 - B (Hombres)'
+                    WHEN (T_A.CAMERA = 42)
+                    THEN 'Baño N2 - B (Mujeres)'
+                    ELSE 'NO DEFINIDO'
+                END ) AS GRUPO_CAMARA,
+            (
+                CASE
+                    WHEN (T_A.CAMERA = 23)
+                    THEN '1'
+                    WHEN (T_A.CAMERA = 24)
+                    THEN '2'
+                    WHEN (T_A.CAMERA = 31)
+                    THEN '3'
+                    WHEN (T_A.CAMERA = 33)
+                    THEN '4'
+                    WHEN (T_A.CAMERA = 40)
+                    THEN '5'
+                    WHEN (T_A.CAMERA = 43)
+                    THEN '6'
+                    WHEN (T_A.CAMERA = 42)
+                    THEN '7'
+                    ELSE '0'
+                END )     AS ID_GRUPO_CAMARA,
+            T_A.ZONE_NAME AS EVENT_TYPE2
+        FROM
+            T_ANALYTICS AS T_A
+        WHERE
+            1 = 1
+        AND T_A.ZONE_NAME IN ('ENTRADA') ) A2
+WHERE
+    1 = 1
+AND (
+        A2.ID_GRUPO_CAMARA BETWEEN '1' AND '7')
+AND (
+        A2.START_DATE BETWEEN '$P!{fecha_inicio} 00:00:00' AND '$P!{fecha_fin} 23:59:59')
+AND (A2.YEAR2 = '$P!{year2}')
+AND (A2.MONTH2 = '$P!{month2}')
+GROUP BY
+    A2.GRUPO_CAMARA
+ORDER BY
+    A2.GRUPO_CAMARA]]>
+	</queryString>
+	<field name="TOTAL" class="java.lang.Integer"/>
+	<field name="GRUPO_CAMARA" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<summary>
+		<band height="250" splitType="Stretch">
+			<pieChart>
+				<chart isShowLegend="true">
+					<reportElement positionType="Float" x="0" y="0" width="802" height="250" isPrintWhenDetailOverflows="true" uuid="e270b3c3-da1e-453c-9c3f-073274129325"/>
+					<chartTitle/>
+					<chartSubtitle/>
+					<chartLegend position="Right"/>
+				</chart>
+				<pieDataset>
+					<keyExpression><![CDATA[$F{GRUPO_CAMARA}]]></keyExpression>
+					<valueExpression><![CDATA[$F{TOTAL}]]></valueExpression>
+				</pieDataset>
+				<piePlot isShowLabels="true" isCircular="true">
+					<plot/>
+					<itemLabel/>
+				</piePlot>
+			</pieChart>
+		</band>
+	</summary>
+</jasperReport>

@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sub_rpte_grafico_total_ingresos" language="groovy" pageWidth="420" pageHeight="300" orientation="Landscape" columnWidth="420" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="b26e587d-5072-4f9c-98aa-051c3bfcd6d5">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="fecha_inicio" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="fecha_fin" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="condicion" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ci_root_path" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+	_t.year2,
+	(
+		CASE
+		WHEN (_t.month2 = '1') THEN
+			'ENERO'
+		WHEN (_t.month2 = '2') THEN
+			'FEBRERO'
+		WHEN (_t.month2 = '3') THEN
+			'MARZO'
+		WHEN (_t.month2 = '4') THEN
+			'ABRIL'
+		WHEN (_t.month2 = '5') THEN
+			'MAYO'
+		WHEN (_t.month2 = '6') THEN
+			'JUNIO'
+		WHEN (_t.month2 = '7') THEN
+			'JULIO'
+		WHEN (_t.month2 = '8') THEN
+			'AGOSTO'
+		WHEN (_t.month2 = '9') THEN
+			'SEPTIEMBRE'
+		WHEN (_t.month2 = '10') THEN
+			'OCTUBRE'
+		WHEN (_t.month2 = '11') THEN
+			'NOVIEMBRE'
+		WHEN (_t.month2 = '12') THEN
+			'DICIEMBRE'
+		ELSE
+			'NO FOUND'
+		END
+	) AS month2,
+	_t.access_arriban,
+	SUM (_t.s_total) AS s_total
+FROM
+	(
+		SELECT
+			(
+				EXTRACT (YEAR FROM a_g.r_date)
+			) AS year2,
+			(
+				EXTRACT (MONTH FROM a_g.r_date)
+			) AS month2,
+			(
+				CASE
+				WHEN a_g.id_group_camera BETWEEN '1' AND '6' THEN
+					'Total Ingresos - IT(Eg + Pa)'
+				ELSE
+					'NO FOUND'
+				END
+			) AS access_arriban,
+			SUM (a_g.total) s_total
+		FROM
+			access_terminal AS a_g
+		WHERE
+			1 = 1
+		AND a_g.id_group_camera BETWEEN '1'
+		AND '6'
+		AND a_g.event IN ('ENTRADA')
+		AND (a_g.r_date BETWEEN '$P!{fecha_inicio}' AND '$P!{fecha_fin}')
+		$P!{condicion}
+		GROUP BY
+			a_g.r_date,
+			a_g.id_group_camera
+	) AS _t
+WHERE
+	1 = 1
+GROUP BY
+	_t.year2,
+	_t.month2,
+	_t.access_arriban
+ORDER BY
+	_t.year2,
+	_t.month2,
+	_t.access_arriban]]>
+	</queryString>
+	<field name="year2" class="java.lang.Double"/>
+	<field name="month2" class="java.lang.String"/>
+	<field name="access_arriban" class="java.lang.String"/>
+	<field name="s_total" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<summary>
+		<band height="300" splitType="Stretch">
+			<stackedBar3DChart>
+				<chart isShowLegend="true">
+					<reportElement x="0" y="20" width="420" height="280" uuid="93b87725-044d-4d49-b233-2f83365f8316"/>
+					<chartTitle/>
+					<chartSubtitle/>
+					<chartLegend/>
+				</chart>
+				<categoryDataset>
+					<categorySeries>
+						<seriesExpression><![CDATA[$F{month2}+" "+$F{year2}]]></seriesExpression>
+						<categoryExpression><![CDATA[$F{month2}+" "+$F{year2}]]></categoryExpression>
+						<valueExpression><![CDATA[$F{s_total}]]></valueExpression>
+					</categorySeries>
+				</categoryDataset>
+				<bar3DPlot isShowLabels="true">
+					<plot/>
+					<itemLabel/>
+					<categoryAxisFormat>
+						<axisFormat verticalTickLabels="true"/>
+					</categoryAxisFormat>
+					<valueAxisFormat>
+						<axisFormat verticalTickLabels="false"/>
+					</valueAxisFormat>
+				</bar3DPlot>
+			</stackedBar3DChart>
+			<staticText>
+				<reportElement x="0" y="0" width="420" height="20" uuid="6a7f571c-b76e-406a-b98c-68129182d4fe"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total Ingresos - IT (Eg + Pa)]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

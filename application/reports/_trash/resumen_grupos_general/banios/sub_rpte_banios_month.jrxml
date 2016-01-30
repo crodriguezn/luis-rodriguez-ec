@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sub_rpte_banios_month" pageWidth="802" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isIgnorePagination="true" uuid="6fe8d424-9d24-4801-89a3-31c9c428d4ad">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="fecha_inicio" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="fecha_fin" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="condicion" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ci_root_path" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{ci_root_path}.concat( "\\application\\reports\\resumen_grupos_general\\banios\\" )]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+    A2.YEAR2  AS YEAR2,
+    A2.MONTH2 AS MONTH2,
+    (
+        CASE
+            WHEN (A2.MONTH2 = '1')
+            THEN 'ENERO'
+            WHEN (A2.MONTH2 = '2')
+            THEN 'FEBRERO'
+            WHEN (A2.MONTH2 = '3')
+            THEN 'MARZO'
+            WHEN (A2.MONTH2 = '4')
+            THEN 'ABRIL'
+            WHEN (A2.MONTH2 = '5')
+            THEN 'MAYO'
+            WHEN (A2.MONTH2 = '6')
+            THEN 'JUNIO'
+            WHEN (A2.MONTH2 = '7')
+            THEN 'JULIO'
+            WHEN (A2.MONTH2 = '8')
+            THEN 'AGOSTO'
+            WHEN (A2.MONTH2 = '9')
+            THEN 'SEPTIEMBRE'
+            WHEN (A2.MONTH2 = '10')
+            THEN 'OCTUBRE'
+            WHEN (A2.MONTH2 = '11')
+            THEN 'NOVIEMBRE'
+            WHEN (A2.MONTH2 = '12')
+            THEN 'DICIEMBRE'
+            ELSE 'NO DEFINIDO'
+        END ) AS L_MONTH2
+FROM
+    (
+        SELECT
+            T_A.*,
+            ( EXTRACT (WEEK FROM T_A.START_DATE) )                   AS WEEK2,
+            CAST (T_A.START_DATE AS DATE)                            AS DATE2,
+            CAST (T_A.START_DATE AS TIME)                            AS TIME2,
+            SUBSTRING ( CAST (T_A.START_DATE AS TIME) FROM 1 FOR 2 ) AS HOUR2,
+            ( EXTRACT (MONTH FROM T_A.START_DATE) )                  AS MONTH2,
+            ( EXTRACT (YEAR FROM T_A.START_DATE) )                   AS YEAR2,
+            (
+                CASE
+                    WHEN (T_A.CAMERA = 23)
+                    THEN '1'
+                    WHEN (T_A.CAMERA = 24)
+                    THEN '2'
+                    WHEN (T_A.CAMERA = 31)
+                    THEN '3'
+                    WHEN (T_A.CAMERA = 33)
+                    THEN '4'
+                    WHEN (T_A.CAMERA = 40)
+                    THEN '5'
+                    WHEN (T_A.CAMERA = 43)
+                    THEN '6'
+                    WHEN (T_A.CAMERA = 42)
+                    THEN '7'
+                    ELSE '0'
+                END )     AS ID_GRUPO_CAMARA,
+            T_A.ZONE_NAME AS EVENT_TYPE2
+        FROM
+            T_ANALYTICS AS T_A
+        WHERE
+            1 = 1
+        AND T_A.ZONE_NAME IN ('ENTRADA') ) A2
+WHERE
+    1 = 1
+AND (
+        A2.ID_GRUPO_CAMARA BETWEEN '1' AND '7')
+AND (
+        A2.START_DATE BETWEEN '$P!{fecha_inicio} 00:00:00' AND '$P!{fecha_fin} 23:59:59')
+GROUP BY
+    A2.YEAR2,
+    A2.MONTH2]]>
+	</queryString>
+	<field name="YEAR2" class="java.lang.Integer"/>
+	<field name="MONTH2" class="java.lang.Integer"/>
+	<field name="L_MONTH2" class="java.lang.String"/>
+	<group name="YEAR2">
+		<groupExpression><![CDATA[$F{YEAR2}]]></groupExpression>
+		<groupHeader>
+			<band height="30">
+				<textField>
+					<reportElement x="0" y="0" width="802" height="30" uuid="91da17f8-b08d-48ad-9945-3777a29125b7"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{YEAR2}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="MONTH2">
+		<groupExpression><![CDATA[$F{MONTH2}]]></groupExpression>
+		<groupHeader>
+			<band height="30">
+				<textField>
+					<reportElement x="0" y="0" width="802" height="30" uuid="33736754-732e-4bfe-9e7f-418d3f89a046"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{L_MONTH2}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="100">
+				<subreport>
+					<reportElement positionType="Float" x="0" y="0" width="802" height="100" uuid="b0c68188-0c87-48c8-8863-88b47213b517"/>
+					<subreportParameter name="fecha_inicio">
+						<subreportParameterExpression><![CDATA[$P{fecha_inicio}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="fecha_fin">
+						<subreportParameterExpression><![CDATA[$P{fecha_fin}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="condicion">
+						<subreportParameterExpression><![CDATA[$P{condicion}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="ci_root_path">
+						<subreportParameterExpression><![CDATA[$P{ci_root_path}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="month2">
+						<subreportParameterExpression><![CDATA[$F{MONTH2}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="year2">
+						<subreportParameterExpression><![CDATA[$F{YEAR2}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="SUBREPORT_DIR"/>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "sub_rpte_det_banios_month.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+</jasperReport>

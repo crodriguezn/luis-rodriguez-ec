@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sub_rpte_grafico" pageWidth="802" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="4ef2c56b-c54e-4ae9-be38-f7528255e18d">
+	<property name="ireport.zoom" value="0.75"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="fecha_inicio" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="fecha_fin" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="condicion" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ci_root_path" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{ci_root_path}.concat( "\\application\\reports\\resumen_grupos_general\\accesos_generales\\" )]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+	T1.YEAR2,
+	T1.MONTH2,
+	T1.GRUPO_CAMARA,
+	MAX (T1.TOTAL) AS MAXIMO,
+	MIN (T1.TOTAL) AS MINIMO,
+	SUM (T1.TOTAL) AS TOTAL,
+	AVG (T1.TOTAL) AS PROMEDIO
+FROM
+	(
+		SELECT
+			YEAR2,
+			MONTH2,
+			DATE2,
+			GRUPO_CAMARA,
+			SUM (CAST(TOTAL_COUNT AS INTEGER)) AS TOTAL
+		FROM
+			(
+				SELECT
+					YEAR2,
+					MONTH2,
+					DATE2,
+					GRUPO_CAMARA,
+					TOTAL_COUNT,
+					CAMERA
+				FROM
+					(
+						SELECT
+							T_BY_C.YEAR2,
+							T_BY_C.MONTH2,
+							T_BY_C.DATE2,
+							T_BY_C.GRUPO_CAMARA,
+							T_BY_C.CAMERA,
+							T_BY_C.TOTAL_COUNT
+						FROM
+							(
+								SELECT
+									A3.CAMERA,
+									A3.WEEK2,
+									A3.DATE2,
+									(COUNT(A3.CAMERA)) AS TOTAL_COUNT,
+									(
+										CASE
+										WHEN (A3.MONTH2 = '1') THEN
+											'ENERO'
+										WHEN (A3.MONTH2 = '2') THEN
+											'FEBRERO'
+										WHEN (A3.MONTH2 = '3') THEN
+											'MARZO'
+										WHEN (A3.MONTH2 = '4') THEN
+											'ABRIL'
+										WHEN (A3.MONTH2 = '5') THEN
+											'MAYO'
+										WHEN (A3.MONTH2 = '6') THEN
+											'JUNIO'
+										WHEN (A3.MONTH2 = '7') THEN
+											'JULIO'
+										WHEN (A3.MONTH2 = '8') THEN
+											'AGOSTO'
+										WHEN (A3.MONTH2 = '9') THEN
+											'SEPTIEMBRE'
+										WHEN (A3.MONTH2 = '10') THEN
+											'OCTUBRE'
+										WHEN (A3.MONTH2 = '11') THEN
+											'NOVIEMBRE'
+										WHEN (A3.MONTH2 = '12') THEN
+											'DICIEMBRE'
+										ELSE
+											'NO DEFINIDO'
+										END
+									) AS MONTH2,
+									A3.YEAR2,
+									A3.GRUPO_CAMARA,
+									A3.EVENT_TYPE2
+								FROM
+									(
+										SELECT
+											A1.*, (
+												EXTRACT (YEAR FROM A1.START_DATE)
+											) AS YEAR2,
+											(
+												EXTRACT (WEEK FROM A1.START_DATE)
+											) AS WEEK2,
+											CAST (A1.START_DATE AS DATE) AS DATE2,
+											CAST (A1.START_DATE AS TIME) AS TIME2,
+											SUBSTRING (
+												CAST (A1.START_DATE AS TIME)
+												FROM
+													1 FOR 2
+											) AS HOUR2,
+											(
+												EXTRACT (MONTH FROM A1.START_DATE)
+											) AS MONTH2,
+											(
+												CASE
+												WHEN (A1.CAMERA BETWEEN 1 AND 4) THEN
+													'1'
+												WHEN (A1.CAMERA BETWEEN 5 AND 8) THEN
+													'2'
+												WHEN (A1.CAMERA BETWEEN 9 AND 10) THEN
+													'3'
+												WHEN (A1.CAMERA BETWEEN 11 AND 12) THEN
+													'4'
+												WHEN (A1.CAMERA BETWEEN 13 AND 14) THEN
+													'5'
+												WHEN (A1.CAMERA BETWEEN 15 AND 16) THEN
+													'6'
+												WHEN (A1.CAMERA BETWEEN 17 AND 20) THEN
+													'7'
+												WHEN (A1.CAMERA BETWEEN 21 AND 22) THEN
+													'8'
+												WHEN (A1.CAMERA BETWEEN 23 AND 24) THEN
+													'9'
+												WHEN (A1.CAMERA BETWEEN 25 AND 28) THEN
+													'10'
+												WHEN (A1.CAMERA BETWEEN 29 AND 30) THEN
+													'11'
+												WHEN (A1.CAMERA BETWEEN 31 AND 33) THEN
+													'12'
+												WHEN (A1.CAMERA BETWEEN 34 AND 37) THEN
+													'13'
+												WHEN (A1.CAMERA BETWEEN 38 AND 39) THEN
+													'14'
+												WHEN (A1.CAMERA BETWEEN 40 AND 43) THEN
+													'15'
+												WHEN (A1.CAMERA BETWEEN 44 AND 47) THEN
+													'16'
+												ELSE
+													'0'
+												END
+											) AS ID_GRUPO_CAMARA,
+											(
+												CASE
+												WHEN (A1.CAMERA BETWEEN 1 AND 4) THEN
+													'PARQUEOS PUBLICOS PUERTA N.1'
+												WHEN (A1.CAMERA BETWEEN 5 AND 8) THEN
+													'PARQUEOS BUSES PUERTA N.2'
+												WHEN (A1.CAMERA BETWEEN 9 AND 10) THEN
+													'LLEGADA TAXIS PUERTA N.3'
+												WHEN (A1.CAMERA BETWEEN 11 AND 12) THEN
+													'ARRIBOS PUERTA A'
+												WHEN (A1.CAMERA BETWEEN 13 AND 14) THEN
+													'ARRIBOS PUERTA B'
+												WHEN (A1.CAMERA BETWEEN 15 AND 16) THEN
+													'ARRIBOS PUERTA C'
+												WHEN (A1.CAMERA BETWEEN 17 AND 20) THEN
+													'PATIO DE COMIDAS'
+												WHEN (A1.CAMERA BETWEEN 21 AND 22) THEN
+													'ASCENSORES PB'
+												WHEN (A1.CAMERA BETWEEN 23 AND 24) THEN
+													'BAÑOS PB ZONA A - B'
+												WHEN (A1.CAMERA BETWEEN 25 AND 28) THEN
+													'ESCALERAS ELECTRICAS'
+												WHEN (A1.CAMERA BETWEEN 29 AND 30) THEN
+													'ASCENSORES 1er. PISO'
+												WHEN (A1.CAMERA BETWEEN 31 AND 33) THEN
+													'BAÑOS 1er. PISO'
+												WHEN (A1.CAMERA BETWEEN 34 AND 37) THEN
+													'TORNIQUETE 1er. PISO'
+												WHEN (A1.CAMERA BETWEEN 38 AND 39) THEN
+													'ASCENSORES 2do. PISO'
+												WHEN (A1.CAMERA BETWEEN 40 AND 43) THEN
+													'BAÑOS 2do. PISO'
+												WHEN (A1.CAMERA BETWEEN 44 AND 47) THEN
+													'TORNIQUETES 2do. PISO'
+												ELSE
+													'NO DEFINIDO'
+												END
+											) AS GRUPO_CAMARA,
+											A1.ZONE_NAME AS EVENT_TYPE2
+										FROM
+											T_ANALYTICS AS A1
+										WHERE
+											1 = 1
+										AND A1.ZONE_NAME IN ('ENTRADA')
+									) A3
+								WHERE
+									(
+										A3.ID_GRUPO_CAMARA = '1'
+										OR A3.ID_GRUPO_CAMARA = '2'
+										OR A3.ID_GRUPO_CAMARA = '3'
+									)
+								AND (
+									A3.START_DATE BETWEEN '$P!{fecha_inicio} 00:00:00'
+									AND '$P!{fecha_fin} 23:59:59'
+								)
+								GROUP BY
+									A3.GRUPO_CAMARA,
+									A3.EVENT_TYPE2,
+									A3.WEEK2,
+									A3.DATE2,
+									A3.MONTH2,
+									A3.CAMERA,
+									A3.YEAR2
+							) AS T_BY_C
+					)
+				GROUP BY
+					YEAR2,
+					MONTH2,
+					DATE2,
+					GRUPO_CAMARA,
+					TOTAL_COUNT,
+					CAMERA
+			)
+		WHERE
+			1 = 1
+		GROUP BY
+			YEAR2,
+			MONTH2,
+			DATE2,
+			GRUPO_CAMARA
+	) AS T1
+GROUP BY
+	T1.GRUPO_CAMARA,
+	T1.YEAR2,
+	T1.MONTH2
+ORDER BY
+    T1.YEAR2,
+    T1.MONTH2,
+    T1.GRUPO_CAMARA]]>
+	</queryString>
+	<field name="YEAR2" class="java.lang.Integer"/>
+	<field name="MONTH2" class="java.lang.String"/>
+	<field name="GRUPO_CAMARA" class="java.lang.String"/>
+	<field name="MAXIMO" class="java.lang.Long"/>
+	<field name="MINIMO" class="java.lang.Long"/>
+	<field name="TOTAL" class="java.lang.Long"/>
+	<field name="PROMEDIO" class="java.lang.Long"/>
+	<variable name="SUM_PROMEDIO" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{PROMEDIO}]]></variableExpression>
+	</variable>
+	<summary>
+		<band height="250" splitType="Stretch">
+			<stackedBar3DChart>
+				<chart isShowLegend="true" renderType="draw">
+					<reportElement x="0" y="0" width="395" height="250" uuid="da1e95d0-ccb9-4037-bc19-82c3cb335a1f"/>
+					<chartTitle/>
+					<chartSubtitle/>
+					<chartLegend position="Bottom">
+						<font size="5" isBold="true"/>
+					</chartLegend>
+				</chart>
+				<categoryDataset>
+					<categorySeries>
+						<seriesExpression><![CDATA[$F{GRUPO_CAMARA}]]></seriesExpression>
+						<categoryExpression><![CDATA[$F{MONTH2}]]></categoryExpression>
+						<valueExpression><![CDATA[$F{TOTAL}]]></valueExpression>
+						<labelExpression><![CDATA[$F{TOTAL}.toString()]]></labelExpression>
+					</categorySeries>
+				</categoryDataset>
+				<bar3DPlot isShowLabels="true">
+					<plot>
+						<seriesColor seriesOrder="0" color="#FFCC00"/>
+						<seriesColor seriesOrder="1" color="#FF9900"/>
+						<seriesColor seriesOrder="2" color="#009999"/>
+					</plot>
+					<itemLabel>
+						<font size="8" isBold="true"/>
+					</itemLabel>
+					<categoryAxisFormat>
+						<axisFormat verticalTickLabels="false">
+							<labelFont>
+								<font size="8" isBold="true"/>
+							</labelFont>
+							<tickLabelFont>
+								<font size="8" isBold="true"/>
+							</tickLabelFont>
+						</axisFormat>
+					</categoryAxisFormat>
+					<valueAxisFormat>
+						<axisFormat verticalTickLabels="false">
+							<labelFont>
+								<font size="8"/>
+							</labelFont>
+							<tickLabelFont>
+								<font size="8"/>
+							</tickLabelFont>
+						</axisFormat>
+					</valueAxisFormat>
+				</bar3DPlot>
+			</stackedBar3DChart>
+			<subreport>
+				<reportElement x="395" y="0" width="407" height="250" uuid="cd7e3929-d2d9-4730-8385-a230a833f26b"/>
+				<subreportParameter name="fecha_inicio">
+					<subreportParameterExpression><![CDATA[$P{fecha_inicio}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="fecha_fin">
+					<subreportParameterExpression><![CDATA[$P{fecha_fin}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="condicion">
+					<subreportParameterExpression><![CDATA[$P{condicion}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ci_root_path">
+					<subreportParameterExpression><![CDATA[$P{ci_root_path}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "sub_rpte_grafico_promedio.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</summary>
+</jasperReport>
