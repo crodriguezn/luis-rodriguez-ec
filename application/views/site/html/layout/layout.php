@@ -607,7 +607,7 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="copyright text-center">
-                            <p>&copy; TrendyTheme 2015. All rights reserved.</p>
+                            <p>&copy; 2015 - <?php echo date('Y') + 1; ?> . Developer by Luis Rodriguez. All rights reserved.</p>
                         </div>
                     </div>
                 </div>
