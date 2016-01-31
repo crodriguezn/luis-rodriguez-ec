@@ -7,6 +7,9 @@ class Response_Ajax extends MY_Response
     protected $iTotalRecords;
     protected $iTotalDisplayRecords;
     
+    // for forms
+    protected $forms;
+    
     public function __construct()
     {
         parent::__construct();
@@ -16,6 +19,21 @@ class Response_Ajax extends MY_Response
         $this->aaData = array();
         $this->iTotalRecords = 0;
         $this->iTotalDisplayRecords = 0;
+    }
+    
+    public function form( $name_key, $arrForm = NULL )
+    {
+        if( !is_array($arrForm) )
+        {
+            return isset($this->forms[$name_key]) ? $this->forms[$name_key] : array();
+        }
+        
+        $this->forms[$name_key] = $arrForm;
+    }
+    
+    public function forms()
+    {
+        return $this->forms;
     }
     
     public function datatable( $arrData, $total_records )

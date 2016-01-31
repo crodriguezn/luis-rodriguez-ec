@@ -15,7 +15,7 @@ class Js extends MY_Controller
             'index_page' => index_page()
         );
         
-        Helper_App_View::view("app/js/core.js", $params);
+        Helper_Site_View::view("site/js/core.js", $params);
     }
     
     /*public function load( $script )
@@ -32,6 +32,6 @@ class Js extends MY_Controller
     {
         $params = array();
         
-        Helper_App_JS::showMVC($js_folder, $params);
+        Helper_Site_JS::showMVC($js_folder, $params);
     }
 }

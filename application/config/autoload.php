@@ -54,7 +54,9 @@ $autoload['packages'] = array();
 
 $autoload['libraries'] = array(
     // SYSTEM
-    'upload'
+    'upload',
+    //aplication
+    'libsession'
 );
 
 
@@ -69,7 +71,7 @@ $autoload['libraries'] = array(
 
 $autoload['helper'] = array(
     // SYSTEM
-    'url', 
+    'url', 'email',
     // APPLICATION
     'encrypt', 'log', 'fecha', 'array', 'email', 'file', 'request', 'browser'
 );

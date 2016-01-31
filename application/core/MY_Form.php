@@ -38,15 +38,15 @@ class MY_Form
 //        }
 //    }
     
-//    public function clearErrors()
-//    {
-//        $this->errors = array();
-//    }
-//    
-//    public function isErrorEmpty()
-//    {
-//        return empty($this->errors);
-//    }
+    public function clearErrors()
+    {
+        $this->errors = array();
+    }
+    
+    public function isErrorEmpty()
+    {
+        return empty($this->errors);
+    }
     
     
 //    public function toArray( $ARRAY_TYPE = self::ARRAY_FULL, $fields_except=array() )

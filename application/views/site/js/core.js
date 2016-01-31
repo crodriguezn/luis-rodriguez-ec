@@ -10,7 +10,6 @@ var Core = {
     //----------------
     init: function()
     {
-        this._init();
         this._runInits();
     },
     //----------------
@@ -21,18 +20,6 @@ var Core = {
     },
     //----------------
     //----------------
-    _init: function()
-    {
-        $('.modal').attr({'data-backdrop':"static", 'data-keyboard':"false"});
-        
-        $(".numerico").numeric({ decimal:false },{ negative: false }, 
-            function() { 
-                alert("Valor no Valido"); 
-                this.value = ""; 
-                this.focus(); 
-            }
-        );
-    },
     _runInits: function()
     {
         var self = this;
@@ -62,99 +49,6 @@ Core.Notification = {
     }
 };
 
-Core.Alert = {
-    question: function(question, fun_yes/*=null*/, fun_no/*=null*/)
-    {
-        var $popup = $('#alert-confirm');
-        
-        $popup.modal('show');
-        
-        $('.modal-body p', $popup).html( question );
-        
-        $('.btn-success', $popup ).off('click').on('click', function(){
-            if( typeof fun_yes != 'undefined' ) {
-                fun_yes();
-            }
-            
-            $popup.modal('hide');
-        });
-        
-        $('.btn-danger', $popup ).off('click').on('click', function(){
-            if( typeof fun_no != 'undefined' ) {
-                fun_no();
-            }
-            
-            $popup.modal('hide');
-        });
-    }
-};
-
-Core.Loading = {
-    show: function( $el, isShow )
-    {
-        if( isShow )
-        {
-            //$el.append('<div class="overlay"><div class="opacity2"></div><i class="icon-spinner7 spin"></i>Hola</div>');
-            $el.append('<div class="overlay"><div class="opacity2"></div><i class="icon-clock spin"></i></div>');
-            $('.overlay', $el).fadeIn(150);
-        }
-        else
-        {
-            $('.overlay', $el).fadeOut(150, function() {
-	        	$(this).remove();
-	        });
-        }
-    },
-    wait: function( isShow/*=true*/, $el/*=null*/ )
-    {
-        /*
-        defaults = {
-            'position': "right",        // right | inside | overlay
-            'text': "",                 // Text to display next to the loader
-            'class': "icon-refresh",    // loader CSS class
-            'tpl': '<span class="isloading-wrapper %wrapper%">%text%<i class="%class% icon-spin"></i></span>',
-            'disableSource': true,      // true | false
-            'disableOthers': []
-        };
-        */
-
-        isShow = typeof isShow == 'undefined' ? true : isShow;
-        
-        if( $el )
-        {
-            if( isShow )
-            {
-                //alert('1');
-                $el.isLoading({
-                    text: "Espere...", position: "overlay",
-                    tpl: '<span class="isloading-wrapper %wrapper%">%text%<i class="%class% icon-clock"></i></span>'
-                });
-            }
-            else
-            {
-                //alert('2');
-                $el.isLoading( "hide" );
-            }
-        }
-        else
-        {
-            if( isShow )
-            {
-                //alert('3');
-                $.isLoading({
-                    text: "Espere...",
-                    tpl: '<span class="isloading-wrapper %wrapper%">%text%<i class="%class% icon-clock"></i></span>'
-                });
-            }
-            else
-            {
-                //alert('4');
-                $.isLoading( "hide" );
-            }
-        }
-    }
-};
-
 Core.Ajax = {
     post: function( url, data, fSuccess, fFail/*=null*/ )
     {
@@ -178,45 +72,6 @@ Core.Ajax = {
     }
 };
 
-Core.Form = {
-    read: function( $content )
-    {
-        var data = {};
-        
-        $('[name]', $content).each(function(idx, el){
-            var $el = $(el);
-            
-            var el_tag = $el.prop('tagName');
-            var el_type = $el.prop('tagName');
-            var el_name = $el.attr('name');
-            
-            if( el_tag == 'TABLE' )
-            {
-                data[ el_name ] = [];
-                
-                $('tbody tr', $el).each(function( idx2, tr ){
-                    var $tr = $(tr);
-                    
-                    data[ el_name ].push( $tr.data() );
-                });
-            }
-            else if( el_tag == 'INPUT' && ( el_type == 'RADIO' || el_type == 'CHECKBOX' ) )
-            {
-                if( $el.prop('checked') )
-                {
-                    data[ el_name ] = $el.val();
-                }
-            }
-            else
-            {
-                data[ el_name ] = $el.val();
-            }
-        });
-        
-        //console.log( data );
-        return data;
-    }
-};
 
 $.fn.serializeObject = function(){
     var o = {};
@@ -233,27 +88,4 @@ $.fn.serializeObject = function(){
     });
     return o;
 };
-/*
-$.fn.removeNumeric = function()
-{
-    return this
-        .data("numeric.decimal", null)
-        .data("numeric.negative", null)
-        .data("numeric.callback", null)
-        .unbind("keypress", $.fn.numeric.keypress)
-        .unbind("keyup", $.fn.numeric.keyup).unbind("blur", $.fn.numeric.blur);
-};*/
 
-$.extend(true, $.fn.dataTable.defaults, {
-    oLanguage: {
-        sSearch: "<span>Filtro:</span> _INPUT_",
-        sLengthMenu: "<span>Mostrar Entradas:</span> _MENU_",
-        sZeroRecords: "No se encontraron resultados",
-        sProcessing: "Procesando...",
-        sEmptyTable: "Ningún dato disponible en esta tabla",
-        sInfo: "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
-        sInfoEmpty: "Mostrando registros del 0 al 0 de un total de 0 registros",
-        sLoadingRecords: "Cargando...",
-        oPaginate: {"sFirst": "Inicio", "sLast": "Último", "sNext": ">", "sPrevious": "<"}
-    }
-});

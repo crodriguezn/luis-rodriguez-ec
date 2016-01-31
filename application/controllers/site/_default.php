@@ -6,11 +6,6 @@ class _Default extends MY_Controller
     {
         parent::__construct();
         
-        $this->redirect('site/home');
+        $this->redirect('site/index');
     }
-    
-    /*public function index()
-    {
-        echo "WELCOME TO PUBLIC";
-    }*/
 }

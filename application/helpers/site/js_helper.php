@@ -9,7 +9,7 @@ class Helper_Site_JS
         $flash_message = '';
 
         /* @var $rFlash Response_Flash */
-        $rFlash = Helper_Public_Flash::get();
+        $rFlash = Helper_Site_Flash::get();
         //Helper_Log::write($rFlash);
         if( !$rFlash->isEmpty() )
         {

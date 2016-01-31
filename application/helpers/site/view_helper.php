@@ -2,7 +2,7 @@
 
 class Helper_Site_View
 {
-    static private $htmlTitle = "Gaviota Construction Inc.";
+    static private $htmlTitle = "Luis Rodriguez";
 
     static function view( $view, $arrParams=array(), $return=FALSE )
     {
