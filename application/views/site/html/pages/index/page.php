@@ -545,9 +545,7 @@
                         <i class="fa fa-mobile"></i>
                         <div class="contact-number">
                             <strong>NÚMERO DE TELÉFONO</strong>
-                            (+593) 982032268<br>
-                            (+593) 0993931717<br>
-                            (+593) 0993931718<br>
+                            (+593) 987249862<br>
                             (+593) 0982491922<br>
                             (+593) 042-976356
                         </div>
