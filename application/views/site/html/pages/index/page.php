@@ -546,8 +546,8 @@
                         <div class="contact-number">
                             <strong>NÚMERO DE TELÉFONO</strong>
                             (+593) 987249862<br>
-                            (+593) 0982491922<br>
-                            (+593) 042-976356
+                            (+593) 982491922<br>
+                            (+593) 42-976356
                         </div>
                     </div>
                 </div>
