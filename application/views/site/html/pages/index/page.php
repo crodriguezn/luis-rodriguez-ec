@@ -10,7 +10,7 @@
     <div class="intro">
         <div class="intro-sub">Yo soy Luis Rodriguez</div>
         <h1>Desarrollador <span>Senior</span></h1>
-        <p>Soy un profesional totalmente independiente Desarrollador WebApp &amp; Desktop<br> Innvador con las últimas tecnologias de desarrollo web &amp; escritorio</p>
+        <p>Soy un profesional totalmente independiente Desarrollador WebApp &amp; Desktop<br> Innovador con las últimas tecnologias de desarrollo web &amp; escritorio</p>
         <div class="social-icons">
             <ul class="list-inline">
                 <li><a href="https://www.facebook.com/LuisRodriguezEC" target="_blank"><i class="fa fa-facebook"></i></a></li>
@@ -174,6 +174,24 @@
                 </div>
                 <div class="resume">
                     <ul class="timeline">
+						<li>
+                            <div class="posted-date">
+                                <span class="month">Abril 2016 - Actual</span>
+                            </div><!-- /posted-date -->
+                            <div class="timeline-panel wow fadeInUp">
+                                <div class="timeline-content">
+                                    <div class="timeline-heading">
+                                        <h3>Vendedor</h3>
+                                        <span>EPUNEMI EC, Guayas, Milagro</span>
+                                    </div><!-- /timeline-heading -->
+                                    <div class="timeline-body">
+                                        <p>
+                                            Vender los diferentes cursos que ofrece la empresa a nivel nacional.
+                                        </p>
+                                    </div><!-- /timeline-body -->
+                                </div> <!-- /timeline-content -->
+                            </div><!-- /timeline-panel -->
+                        </li>
                         <li class="timeline-inverted">
                             <div class="posted-date">
                                 <span class="month">Feb-Oct, 2015</span>
@@ -204,7 +222,7 @@
                                     </div><!-- /timeline-heading -->
                                     <div class="timeline-body">
                                         <p>
-                                            Mi función principal instalar servicio de internet, cableado estructurado a pequeñas y medianas empresas.
+                                            Mi función principal instalar servicio de internet y dar soporte técnico.
                                         </p>
                                     </div><!-- /timeline-body -->
                                 </div> <!-- /timeline-content -->
@@ -545,10 +563,8 @@
                         <i class="fa fa-mobile"></i>
                         <div class="contact-number">
                             <strong>NÚMERO DE TELÉFONO</strong>
-                            (+593) 982032268<br>
-                            (+593) 0993931717<br>
-                            (+593) 0993931718<br>
-                            (+593) 0982491922<br>
+                            (+593) 997287044<br>
+                            (+593) 987249862<br>
                             (+593) 042-976356
                         </div>
                     </div>
