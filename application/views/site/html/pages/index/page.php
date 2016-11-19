@@ -174,9 +174,27 @@
                 </div>
                 <div class="resume">
                     <ul class="timeline">
-						<li>
+                        <li class="timeline-inverted">
                             <div class="posted-date">
-                                <span class="month">Abril 2016 - Actual</span>
+                                <span class="month">Oct 2016 - Actual</span>
+                            </div><!-- /posted-date -->
+                            <div class="timeline-panel wow fadeInUp">
+                                <div class="timeline-content">
+                                    <div class="timeline-heading">
+                                        <h3>Docente Universitario</h3>
+                                        <span>Universidad Estatal de Milagro -UNEMI- EC, Guayas, Milagro</span>
+                                    </div><!-- /timeline-heading -->
+                                    <div class="timeline-body">
+                                        <p>
+                                            Impartir clases a los diferentes semestres de la carrera Ingeniería En Sistemas Computacionales, Gestión de Tutorias a los egresados de la carrera Ing. en Sistemas Computacionales y Gestión de la Acreditación de la carrera Ingeniería En Sistemas Computacionales.
+                                        </p>
+                                    </div><!-- /timeline-body -->
+                                </div> <!-- /timeline-content -->
+                            </div> <!-- /timeline-panel -->
+                        </li>
+                        <li>
+                            <div class="posted-date">
+                                <span class="month">Abril 2016 - Oct 2016</span>
                             </div><!-- /posted-date -->
                             <div class="timeline-panel wow fadeInUp">
                                 <div class="timeline-content">
